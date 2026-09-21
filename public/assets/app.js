@@ -3,8 +3,9 @@
 import { assess, haversineKm, compensationFor, dkk, SITUATION_LABEL } from '/assets/eu261.js?v=0e4e1348';
 
 const $ = (s, el = document) => el.querySelector(s);
-const form = $('form.calc');
+const form = $('form.calc:not(#brev-form)');
 if (form) init();
+if (document.getElementById('brev-form')) import('/assets/letter.js?v=0c0d4cf5').then((m) => m.initLetter());
 
 async function init() {
   const data = await (await fetch('/data/airports.json')).json();
@@ -76,7 +77,7 @@ async function init() {
     const head = r.verdict === 'ja' ? 'Ja, du har krav på kompensation' : r.verdict === 'sandsynligvis' ? 'Sandsynligvis, kræv den' : 'Nej, ikke kompensation i denne situation';
     const amount = r.eur ? `<span class="amount">${r.eur.toLocaleString('da-DK')} ${r.currency || '€'} <small>≈ ${r.dkk.toLocaleString('da-DK')} kr pr. person</small></span>` : '';
     const ctaData = $('#cta-data') ? JSON.parse($('#cta-data').textContent) : null;
-    const cta = r.eur && ctaData ? `<div class="cta"><div><h2>${ctaData.h}</h2><p>${ctaData.p}</p></div><div class="cta-actions"><a class="btn big" href="${ctaData.url}" target="_blank" rel="${ctaData.rel}">${ctaData.btn}</a><span class="small muted">${ctaData.note}</span><a class="btn secondary" href="/klag-selv/">Eller klag selv, gratis</a></div></div>` : `<p><a class="btn secondary" href="/klag-selv/">Se dine øvrige rettigheder og sådan klager du</a></p>`;
+    const cta = r.eur && ctaData ? `<div class="cta"><div><h2>${ctaData.h}</h2><p>${ctaData.p}</p></div><div class="cta-actions"><a class="btn big" href="${ctaData.url}" target="_blank" rel="${ctaData.rel}">${ctaData.btn}</a><span class="small muted">${ctaData.note}</span><a class="btn secondary" href="/klag-selv/?fra=${from.iata}&til=${to.iata}&hvad=${hvad}${al ? '&selskab=' + al.slug : ''}#brev">Eller skriv klagen selv, gratis</a></div></div>` : `<p><a class="btn secondary" href="/klag-selv/?fra=${from.iata}&til=${to.iata}&hvad=${hvad}${al ? '&selskab=' + al.slug : ''}#brev">Skriv brev om dine øvrige rettigheder</a></p>`;
     res.innerHTML = `<div class="verdict ${r.verdict}"><h2>${head}</h2>${amount}
 <p class="muted">${label}, ${from.city} til ${to.city}, ${r.km.toLocaleString('da-DK')} km${al ? ', ' + al.name : ''}. ${r.law ? 'Regelsæt: ' + r.law + '.' : ''}</p>
 <h3>Derfor</h3><ul>${r.reasons.map((x) => `<li>${x}</li>`).join('')}</ul>

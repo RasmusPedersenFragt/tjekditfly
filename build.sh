@@ -12,7 +12,9 @@ h() { md5sum "$1" | cut -c1-8; }
 mkdir -p public/assets public/data
 cp src/lib/eu261.mjs public/assets/eu261.js
 RULES_V=$(h public/assets/eu261.js)
-sed "s|__RULES_V__|$RULES_V|g" src/assets/app.js > public/assets/app.js
+sed "s|__RULES_V__|$RULES_V|g" src/assets/letter.js > public/assets/letter.js
+LETTER_V=$(h public/assets/letter.js)
+sed -e "s|__RULES_V__|$RULES_V|g" -e "s|__LETTER_V__|$LETTER_V|g" src/assets/app.js > public/assets/app.js
 APP_V=$(h public/assets/app.js)
 cp src/assets/style.css public/assets/style.css
 STYLE_V=$(h public/assets/style.css)
@@ -21,6 +23,7 @@ cp src/data/airports.json public/data/airports.json
 echo "Assets: style $STYLE_V, app $APP_V, rules $RULES_V"
 
 node --check public/assets/app.js
+node --check public/assets/letter.js
 node --check public/assets/eu261.js
 
 rm -rf public/rute public/flyselskab public/situation public/lufthavn

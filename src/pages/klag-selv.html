@@ -1,26 +1,112 @@
 <section class="hero compact">
 <h1>Klag selv: sådan kræver du kompensation uden at betale salær</h1>
-<p class="lead">Det er gratis, og det virker ofte. Du skal bruge dit bookingnummer, flynummeret og datoen. Regn med to til otte ugers ventetid pr. runde.</p>
+<p class="lead">Det er gratis, og det virker ofte. Udfyld felterne herunder, så skriver vi brevet til flyselskabet med beløb, afstand og henvisning til reglerne. Regn med to til otte ugers ventetid pr. runde.</p>
 </section>
 
 <div class="answer">
 <h2>Det korte svar</h2>
-<p>Skriv til flyselskabet med skabelonen herunder, henvis til forordning 261/2004 artikel 7, og bed om beløbet inden 14 dage. Svarer de ikke eller afviser uden dokumentation, klag til Trafikstyrelsen (fly fra Danmark) eller det tilsvarende organ i afgangslandet. Det er gratis. Sidste udvej er småsagsprocessen ved byretten.</p>
+<p>Skriv til flyselskabet, henvis til forordning 261/2004 artikel 7, og bed om beløbet inden 14 dage. Svarer de ikke eller afviser uden dokumentation, klag til Trafikstyrelsen (fly fra Danmark) eller det tilsvarende organ i afgangslandet. Det er gratis. Sidste udvej er småsagsprocessen ved byretten.</p>
 </div>
+
+<section id="brev">
+<h2>Skriv dit klagebrev</h2>
+<p>Brevet laves i din browser ud fra det, du taster. Intet sendes til os eller gemmes. Felter med stjerne skal udfyldes; resten gør brevet stærkere.</p>
+<form class="calc" id="brev-form" novalidate>
+<fieldset class="field"><legend>Sprog</legend>
+<div class="choices two"><label><input type="radio" name="sprog" value="da" checked> Dansk (til SAS, Norwegian, Sunclass, Jet Time og andre nordiske)</label><label><input type="radio" name="sprog" value="en"> Engelsk (til alle andre selskaber)</label></div></fieldset>
+
+<div class="two">
+<div class="field"><label for="b-selskab">Flyselskab *</label><select id="b-selskab" name="selskab"><option value="">Vælg selskab</option><option value="andet">Andet selskab</option></select></div>
+<div class="field" id="b-selskab-andet-wrap" hidden><label for="b-selskab-andet">Selskabets navn</label><input type="text" id="b-selskab-andet" name="selskabAndet" autocomplete="off"></div>
+</div>
+<div class="two">
+<div class="field"><label for="b-fra">Fra lufthavn *</label><select id="b-fra" name="fra"></select></div>
+<div class="field"><label for="b-til">Til lufthavn (endelig destination) *</label><select id="b-til" name="til"><option value="">Vælg lufthavn</option></select></div>
+</div>
+<p class="hint" id="b-distance" aria-live="polite"></p>
+<div class="two">
+<div class="field"><label for="b-booking">Bookingnummer *</label><input type="text" id="b-booking" name="booking" placeholder="fx K7X2PQ" autocomplete="off" autocapitalize="characters"></div>
+<div class="field"><label for="b-fly">Flynummer *</label><input type="text" id="b-fly" name="flynr" placeholder="fx SK1501" autocomplete="off" autocapitalize="characters"></div>
+</div>
+<div class="two">
+<div class="field"><label for="b-dato">Afgangsdato *</label><input type="date" id="b-dato" name="dato"></div>
+<div class="field"><label for="b-pax">Passagerer i bookingen *</label><input type="text" id="b-pax" name="pax" placeholder="Fulde navne, adskilt med komma"><p class="hint">Alle med egen billet har krav på fuldt beløb, også børn.</p></div>
+</div>
+
+<fieldset class="field"><legend>Hvad skete der? *</legend>
+<div class="choices">
+<label><input type="radio" name="hvad" value="forsinket" checked> Flyet var forsinket</label>
+<label><input type="radio" name="hvad" value="aflyst"> Flyet blev aflyst</label>
+<label><input type="radio" name="hvad" value="naegtet-boarding"> Jeg blev nægtet boarding</label>
+</div></fieldset>
+
+<div id="b-forsinket" class="two">
+<div class="field"><label for="b-plan">Planlagt ankomst *</label><input type="time" id="b-plan" name="plan"></div>
+<div class="field"><label for="b-faktisk">Faktisk ankomst (døren åbnet) *</label><input type="time" id="b-faktisk" name="faktisk"><label class="small" style="font-weight:500;display:flex;gap:8px;align-items:center;margin-top:6px"><input type="checkbox" name="naesteDag" style="width:20px;height:20px"> Ankom først næste dag</label></div>
+</div>
+<div id="b-aflyst" hidden class="two">
+<div class="field"><label for="b-besked">Hvornår fik du besked om aflysningen? *</label><input type="date" id="b-besked" name="besked"></div>
+<div class="field"><label for="b-ombook">Hvad blev du tilbudt?</label><select id="b-ombook" name="ombook"><option value="ingen">Ingen brugbar ombookning, jeg tog refusion eller købte selv ny billet</option><option value="senere">Ombookning, der kom frem mere end 2 timer senere end planlagt</option><option value="taet">Ombookning tæt på det oprindelige tidspunkt</option></select></div>
+</div>
+
+<div class="field"><label for="b-aarsag">Hvad sagde selskabet var årsagen?</label><select id="b-aarsag" name="aarsag">
+<option value="ved-ikke" selected>Ved ikke / fik ingen forklaring</option>
+<option value="teknisk">Teknisk fejl på flyet</option>
+<option value="personale">Manglende eller syg besætning</option>
+<option value="operationelt">Forsinket indkommende fly, rotation, overbooking, "operationelle årsager"</option>
+<option value="egen-strejke">Strejke blandt selskabets eget personale</option>
+<option value="ekstern-strejke">Strejke hos flyveledere eller lufthavn</option>
+<option value="vejr">Vejr</option>
+<option value="andet">Andet</option>
+</select></div>
+
+<div class="field"><label for="b-udgifter">Udgifter, du vil have dækket (valgfrit)</label><input type="text" id="b-udgifter" name="udgifter" placeholder="fx mad 240 kr, hotel 890 kr, taxa 310 kr. Gem kvitteringerne."></div>
+
+<h3 style="margin:8px 0 0">Dine oplysninger</h3>
+<div class="two">
+<div class="field"><label for="b-navn">Dit fulde navn *</label><input type="text" id="b-navn" name="navn" autocomplete="name"></div>
+<div class="field"><label for="b-adresse">Adresse</label><input type="text" id="b-adresse" name="adresse" autocomplete="street-address" placeholder="Vej og nr., postnr. og by"></div>
+</div>
+<div class="two">
+<div class="field"><label for="b-mail">E-mail *</label><input type="text" id="b-mail" name="mail" autocomplete="email" inputmode="email"></div>
+<div class="field"><label for="b-tlf">Telefon</label><input type="text" id="b-tlf" name="tlf" autocomplete="tel" inputmode="tel"></div>
+</div>
+<fieldset class="field"><legend>Udbetaling</legend>
+<div class="choices"><label><input type="radio" name="konto" value="senere" checked> Bed selskabet bekræfte kravet først, så oplyser jeg kontonummer bagefter (anbefalet)</label><label><input type="radio" name="konto" value="nu"> Skriv mit kontonummer i brevet: <input type="text" name="kontonr" placeholder="Reg.nr. og kontonr." style="min-height:40px;padding:6px 10px;font-size:1rem;margin-left:8px"></label></div></fieldset>
+
+<button class="btn big" type="submit">Skriv mit brev</button>
+<p class="small muted" id="b-fejl" role="alert"></p>
+</form>
+
+<div id="brev-ud" class="result" hidden>
+<div class="notice" id="b-advarsel" hidden></div>
+<h3>Dit klagebrev</h3>
+<div class="letter" id="brev-tekst"></div>
+<p style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">
+<button class="btn" type="button" data-copy="brev-tekst">Kopiér teksten</button>
+<a class="btn secondary" id="b-mailto" href="#">Åbn i dit mailprogram</a>
+<button class="btn secondary" type="button" onclick="window.print()">Udskriv eller gem som PDF</button>
+</p>
+<p class="small muted" id="b-hvorhen"></p>
+</div>
+<script type="application/json" id="airlines-data">{{AIRLINES_JSON}}</script>
+<script type="module" src="/assets/app.js"></script>
+</section>
 
 <section class="prose">
 <h2>Trin for trin</h2>
 <ol class="steps">
-<li><strong>Saml dokumentation.</strong> Booking­bekræftelse, boardingkort (fotografér dem), flynummer, planlagt og faktisk ankomsttid. Skriv ned, hvad selskabet sagde om årsagen, og bed om det på skrift. Gem kvitteringer for mad, hotel og transport, dem skal selskabet også dække.</li>
+<li><strong>Saml dokumentation.</strong> Bookingbekræftelse, boardingkort (fotografér dem), flynummer, planlagt og faktisk ankomsttid. Skriv ned, hvad selskabet sagde om årsagen, og bed om det på skrift. Gem kvitteringer for mad, hotel og transport, dem skal selskabet også dække.</li>
 <li><strong>Tjek dit krav.</strong> Brug <a href="/beregn/">beregneren</a>, så du kender beløbet og ved, hvilke undtagelser selskabet kan bruge.</li>
-<li><strong>Skriv til selskabet.</strong> De fleste har en formular til "EU261-krav" eller "kompensation" på deres hjemmeside; find den på <a href="/flyselskab/">selskabets side her</a>. Brug teksten herunder. Send én mail pr. booking, og skriv alle passagerer i samme booking i mailen.</li>
+<li><strong>Skriv til selskabet.</strong> Brug brevet ovenfor. De fleste selskaber har en formular til "EU261-krav" eller "kompensation" på deres hjemmeside, hvor du kan sætte teksten ind; find den på <a href="/flyselskab/">selskabets side her</a>. Send én henvendelse pr. booking, og skriv alle passagerer i samme booking med.</li>
 <li><strong>Vent, og hold fast.</strong> Selskabet skal svare inden for rimelig tid, typisk 6 uger. Afviser de med "usædvanlige omstændigheder", så bed om dokumentation for netop din flyvning: hvad, hvornår, og hvad de gjorde for at undgå det. Mange afvisninger falder ved det spørgsmål.</li>
 <li><strong>Klag til myndigheden.</strong> Får du intet svar efter 6 uger, eller en afvisning, du ikke er enig i, klager du gratis til <a href="https://www.trafikstyrelsen.dk/" rel="noopener" target="_blank">Trafikstyrelsen</a>, hvis flyet afgik fra Danmark eller landede i Danmark fra et land uden for EU med et EU-selskab. Afgik flyet fra et andet EU-land, er det landets egen myndighed, fx Luftfahrt-Bundesamt i Tyskland eller AESA i Spanien. Trafikstyrelsen kan træffe afgørelse i sagen, og de fleste selskaber følger den.</li>
 <li><strong>Retten, hvis alt andet svigter.</strong> Krav under 50.000 kr kan køres som småsag ved byretten uden advokat. Retsafgiften er 750 kr, som du får tilbage, hvis du vinder. Her giver det mening at overveje et <a href="/sammenlign/">kompensationsselskab</a>, som tager retssagen uden risiko for dig mod et højere salær.</li>
 </ol>
 
-<h2>Skabelon til flyselskabet</h2>
-<p>Udskift det, der står i firkantede klammer. Skriv på dansk til danske og skandinaviske selskaber; til andre kan du bruge den engelske udgave længere nede.</p>
+<h2>Tom skabelon, hvis du hellere vil skrive selv</h2>
+<details class="faq-plain"><summary class="btn secondary" style="display:inline-flex">Vis den tomme skabelon på dansk og engelsk</summary>
+<p style="margin-top:16px">Udskift det, der står i firkantede klammer.</p>
 <div class="letter" id="brev-da">Til [flyselskab], kundeservice
 
 Krav om kompensation efter forordning (EF) nr. 261/2004
@@ -50,8 +136,7 @@ Med venlig hilsen
 [E-mail og telefon]</div>
 <button class="btn secondary copy" type="button" data-copy="brev-da">Kopiér teksten</button>
 
-<h3>Engelsk udgave</h3>
-<div class="letter" id="brev-en">To [airline], Customer Relations
+<div class="letter" id="brev-en" style="margin-top:20px">To [airline], Customer Relations
 
 Claim for compensation under Regulation (EC) No 261/2004
 
@@ -78,6 +163,7 @@ Yours faithfully
 [Address]
 [Email and phone]</div>
 <button class="btn secondary copy" type="button" data-copy="brev-en">Kopiér teksten</button>
+</details>
 
 <h2>Hvornår giver det mening at bruge et kompensationsselskab i stedet?</h2>
 <ul>
@@ -93,4 +179,3 @@ Yours faithfully
 <h2>Ofte stillede spørgsmål om at klage selv</h2>
 {{FAQ}}
 </section>
-<script type="module" src="/assets/app.js"></script>
