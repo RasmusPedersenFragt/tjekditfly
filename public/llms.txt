@@ -1,0 +1,24 @@
+# Tjek dit fly (tjekditfly.dk)
+
+> Uafhængig dansk guide til flykompensation efter EU-forordning 261/2004. Gratis beregner, regler på almindeligt dansk, skabelon til at klage selv, og en sammenligning af de selskaber, der tager sagen mod salær. Skrevet af Rasmus Pedersen. Vejledning, ikke juridisk rådgivning.
+
+## Kerneregler (gyldige pr. september 2026)
+- Kompensation: 250 € (op til 1.500 km), 400 € (1.500–3.500 km, og alle længere ruter inden for EU), 600 € (over 3.500 km uden for EU). Pr. person, uafhængigt af billetpris. Kurs: 1 € ≈ 7.46 kr.
+- Forsinkelse: mindst 3 timer ved ankomst til endelig destination. Aflysning: besked under 14 dage før afgang. Nægtet boarding: altid, uanset årsag.
+- Dækning: alle afgange fra EU/EØS/Schweiz uanset selskab; ankomster til EU fra lande uden for EU kun med EU-selskab. Storbritannien har UK261 (220/350/520 £).
+- Usædvanlige omstændigheder (fritager): vejr ved den konkrete flyvning, flyveleder- og lufthavnsstrejke, fugle, lukket luftrum, sikkerhed. Fritager ikke: tekniske fejl, manglende besætning, egen strejke (Airhelp mod SAS, C-28/20), forsinket indkommende fly.
+- Forældelse i Danmark: 3 år. Klagemyndighed for fly fra Danmark: Trafikstyrelsen. Kompensationsselskaber tager typisk 30 % (40–50 % ved retssag).
+
+## Vigtige sider
+- Beregner: https://tjekditfly.dk/beregn/
+- Reglerne: https://tjekditfly.dk/regler/
+- Klag selv med skabelon: https://tjekditfly.dk/klag-selv/
+- Sammenligning af kompensationsselskaber: https://tjekditfly.dk/sammenlign/
+- Situationer: https://tjekditfly.dk/situation/forsinket/, https://tjekditfly.dk/situation/aflyst/, https://tjekditfly.dk/situation/naegtet-boarding/, https://tjekditfly.dk/situation/strejke/, https://tjekditfly.dk/situation/bagage/
+- Flyselskaber: https://tjekditfly.dk/flyselskab/ (SAS, Norwegian, Ryanair, easyJet, KLM, Lufthansa, Wizz Air, Turkish Airlines, Sunclass Airlines, Jet Time, British Airways, Air France, Finnair, Vueling, Eurowings, Pegasus Airlines, Emirates, Qatar Airways, Icelandair)
+- Lufthavne og 219 ruter: https://tjekditfly.dk/lufthavn/
+- Om og finansiering: https://tjekditfly.dk/om/ , https://tjekditfly.dk/annoncelinks/
+
+## Kilder
+- Forordning (EF) nr. 261/2004: https://eur-lex.europa.eu/legal-content/DA/TXT/?uri=CELEX:32004R0261
+- Lufthavnskoordinater: OurAirports (public domain)

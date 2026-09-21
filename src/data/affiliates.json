@@ -1,0 +1,4 @@
+{
+  "_comment": "Ét opslag pr. udbyder. url er det link, knapperne bruger. affiliate: false betyder almindeligt link uden provision (rel=noopener). Skift til true og indsæt Adtraction-tracking-linket, når programmet er godkendt; så får knappen rel='nofollow sponsored noopener' og teksten 'Annoncelink'. since: dato for aftalen, bruges på /annoncelinks/.",
+  "flyhjaelp": { "name": "Flyhjælp", "url": "https://flyhjaelp.dk/", "affiliate": false, "network": "Adtraction", "since": null }
+}

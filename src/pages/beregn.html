@@ -1,0 +1,68 @@
+<section class="hero compact">
+<h1>Beregn din kompensation</h1>
+<p class="lead">Vælg rute og det, der skete. Svaret bygger på EU-forordning 261/2004 og bliver regnet i din browser. Intet sendes nogen steder.</p>
+</section>
+<section>
+<form class="calc" novalidate>
+<div class="two">
+<div class="field"><label for="fra">Fløj du fra</label><select id="fra" name="fra"></select></div>
+<div class="field"><label for="til">Til (din endelige destination)</label><select id="til" name="til"><option value="">Vælg lufthavn</option></select></div>
+</div>
+<button type="button" class="swap" id="swap">⇄ Byt retning</button>
+<p class="hint" id="distance" aria-live="polite"></p>
+<div class="field"><label for="selskab">Flyselskab (valgfrit, men vigtigt på hjemrejser fra lande uden for EU)</label><select id="selskab" name="selskab"><option value="">Ved ikke / andet selskab</option></select></div>
+
+<fieldset class="field"><legend>Hvad skete der?</legend>
+<div class="choices">
+<label><input type="radio" name="hvad" value="forsinket" checked> Flyet var forsinket</label>
+<label><input type="radio" name="hvad" value="aflyst"> Flyet blev aflyst</label>
+<label><input type="radio" name="hvad" value="naegtet-boarding"> Jeg blev nægtet boarding (fx overbooking)</label>
+</div></fieldset>
+
+<div class="field" id="f-forsinket"><label for="timer">Hvor mange timer for sent nåede du din endelige destination?</label>
+<select id="timer" name="timer"><option value="0">Under 2 timer</option><option value="2">2 til 3 timer</option><option value="3" selected>3 til 4 timer</option><option value="4">4 til 5 timer</option><option value="5">5 timer eller mere</option><option value="24">Først næste dag</option></select>
+<p class="hint">Tæl fra det planlagte ankomsttidspunkt til det tidspunkt, hvor flyets dør blev åbnet. Havde du skift, tæller kun ankomsten ved den sidste lufthavn.</p></div>
+
+<div id="f-aflyst" hidden>
+<div class="field"><label for="varsel">Hvornår fik du besked om aflysningen?</label>
+<select id="varsel" name="varsel"><option value="0" selected>Under 7 dage før afgang, eller først i lufthavnen</option><option value="7">7 til 13 dage før afgang</option><option value="14">14 dage eller mere før afgang</option></select></div>
+<div class="field"><label for="ombook">Hvor meget senere end planlagt nåede du frem med den ombookning, selskabet tilbød?</label>
+<select id="ombook" name="ombook"><option value="">Jeg fik ingen brugbar ombookning / tog refusion</option><option value="2">Højst 2 timer senere</option><option value="3">2 til 3 timer senere</option><option value="4">3 til 4 timer senere</option><option value="5">Mere end 4 timer senere</option></select></div>
+</div>
+
+<div id="f-boarding" hidden class="field"><label for="frivillig">Afgav du frivilligt din plads mod en godtgørelse?</label>
+<select id="frivillig" name="frivillig"><option value="nej" selected>Nej, jeg blev afvist mod min vilje</option><option value="ja">Ja, jeg meldte mig frivilligt</option></select></div>
+
+<div class="field" id="f-aarsag"><label for="aarsag">Hvad sagde selskabet var årsagen?</label>
+<select id="aarsag" name="aarsag">
+<option value="ved-ikke" selected>Ved ikke / fik ingen forklaring</option>
+<option value="teknisk">Teknisk fejl på flyet</option>
+<option value="personale">Manglende besætning eller syg besætning</option>
+<option value="operationelt">Forsinket indkommende fly, rotation, overbooking</option>
+<option value="egen-strejke">Strejke blandt selskabets eget personale</option>
+<option value="ekstern-strejke">Strejke hos flyveledere, lufthavn eller sikkerhedskontrol</option>
+<option value="vejr">Vejr (tåge, storm, sne, askesky)</option>
+<option value="atc">Restriktioner fra flyvekontrollen</option>
+<option value="fugl">Fugl i motoren</option>
+<option value="sikkerhed">Sikkerhed, lukket luftrum, politisk uro</option>
+</select>
+<p class="hint">Selskabets forklaring er ikke altid rigtig. Vælg det, de sagde; vi fortæller, om det holder.</p></div>
+
+<button class="btn big" type="submit">Vis mit resultat</button>
+</form>
+<div id="resultat" class="result" aria-live="polite"></div>
+<script type="application/json" id="airlines-data">{{AIRLINES_JSON}}</script>
+<script type="application/json" id="cta-data">{{CTA_JSON}}</script>
+<script type="module" src="/assets/app.js"></script>
+</section>
+
+<section class="prose">
+<h2>Sådan regner beregneren</h2>
+<ul>
+<li><strong>Afstanden</strong> måles som storcirkelafstand mellem de to lufthavne ud fra deres koordinater, præcis som forordningens artikel 7 kræver. Mellemlandinger tæller ikke; det er afstanden fra første afgang til endelig destination.</li>
+<li><strong>Beløbet</strong> er 250 € op til 1.500 km, 400 € fra 1.500 til 3.500 km og 600 € derover. Ruter over 3.500 km, hvor begge lufthavne ligger i EU (fx København til Gran Canaria), giver 400 €.</li>
+<li><strong>Dækningen</strong> afhænger af, hvor flyet afgår fra, og hvem der flyver. Afgang fra EU er altid dækket. Ankomst til EU fra et land uden for EU er kun dækket med et EU-selskab. Norge, Island og Schweiz tæller som EU her.</li>
+<li><strong>Årsagen</strong> vurderes efter EU-Domstolens praksis. Tekniske fejl, besætningsproblemer og egen strejke fritager ikke. Vejr, flyvelederstrejke, fugle og sikkerhed kan fritage, men selskabet skal bevise det.</li>
+</ul>
+<p>Kompensationen er ét beløb pr. person og er uafhængig af billetprisen. Ud over kompensationen har du altid ret til forplejning, ombookning eller refusion og eventuelt hotel. <a href="/regler/">Læs alle reglerne</a>.</p>
+</section>

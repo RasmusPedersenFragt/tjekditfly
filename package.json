@@ -1,0 +1,16 @@
+{
+  "name": "tjekditfly",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Tjek dit fly – uafhængig guide til flykompensation efter EU261. tjekditfly.dk",
+  "type": "module",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "airports": "node scripts/make-airports.mjs",
+    "build": "bash build.sh",
+    "test": "node scripts/test-pages.mjs && node scripts/test-rules.mjs",
+    "serve": "node serve.cjs"
+  }
+}
