@@ -109,7 +109,7 @@ export async function initLetter() {
       return;
     }
     if (voluntary) {
-      block('<h2>Frivilligt afgivet plads: aftalen gælder</h2><p>Meldte du dig frivilligt og aftalte en godtgørelse med selskabet, er det den aftale, der gælder, ikke den faste kompensation i forordningen. Et brev, der kræver kompensation "mod min vilje", ville være forkert. Har selskabet ikke leveret det, I aftalte, så skriv til dem med henvisning til aftalen og dokumentationen for den.</p>');
+      block('<h2>Du afgav pladsen frivilligt: aftalen gælder</h2><p>Meldte du dig frivilligt og aftalte en godtgørelse med selskabet, er det den aftale, der gælder, ikke den faste kompensation i forordningen. Et brev, der kræver kompensation "mod min vilje", ville være forkert. Har selskabet ikke leveret det, I aftalte, så skriv til dem med henvisning til aftalen og dokumentationen for den.</p>');
       return;
     }
     if (hvad === 'forsinket' && delayMin > 1440) { block('<h2>Tjek tiderne</h2><p>Forsinkelsen bliver over 24 timer. Sæt kun flueben i "Ankom først næste dag", hvis flyet landede dagen efter den planlagte ankomst, og tjek klokkeslættene.</p>'); return; }
@@ -117,8 +117,8 @@ export async function initLetter() {
     const km = r.km;
     const pax = v('pax').split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean);
     const h = Math.floor(delayMin / 60), m = delayMin % 60;
-    const durDa = `${h} time${h === 1 ? '' : 'r'}${m ? ` og ${m} minutter` : ''}`;
-    const durEn = `${h} hour${h === 1 ? '' : 's'}${m ? ` ${m} minutes` : ''}`;
+    const durDa = `${h} time${h === 1 ? '' : 'r'}${m ? ` og ${m} minut${m === 1 ? '' : 'ter'}` : ''}`;
+    const durEn = `${h} hour${h === 1 ? '' : 's'}${m ? ` ${m} minute${m === 1 ? '' : 's'}` : ''}`;
     const assistH = assistanceThresholdH(km);
     const expenses = v('udgifter');
     const rerouted = hvad === 'aflyst' && rerouteH !== null; // fløj med selskabets ombookning
@@ -131,20 +131,20 @@ export async function initLetter() {
     if (!hasComp && !canClaimRefund && !claimExpenses) {
       const why = r.reasons.map((x) => `<li>${x}</li>`).join('');
       const tip = hvad === 'forsinket' && delayMin < assistH * 60
-        ? `<p>På denne rute (${km.toLocaleString('da-DK')} km) giver forordningen først ret til forplejning fra ${assistH} timers forsinkelse og kompensation fra 3 timer ved ankomsten. Har du haft udgifter alligevel, kan du prøve selskabets kundeservice eller din rejseforsikring, men der er ikke et krav efter forordningen at henvise til.</p>`
+        ? `<p>På denne rute (${km.toLocaleString('da-DK')} km) giver forordningen først ret til forplejning fra ${assistH} timers forsinkelse og kompensation fra 3 timer ved ankomsten. Har du haft udgifter alligevel, kan du prøve selskabets kundeservice eller din rejseforsikring, men der er ikke noget krav efter forordningen at henvise til.</p>`
         : hvad === 'forsinket' ? '<p>Havde du udgifter til mad eller transport i ventetiden, så skriv dem i feltet "Udgifter", så laver vi et brev om dem.</p>'
           : rerouted ? '<p>Du tog imod selskabets ombookning, så retten til refusion er brugt. Havde du udgifter i ventetiden, så skriv dem i feltet "Udgifter".</p>' : '';
-      block(`<h2>Der er ikke et krav at skrive brev om</h2><ul>${why}</ul>${tip}<p><a href="/beregn/?fra=${from.iata}&til=${to.iata}&hvad=${hvad}${al ? '&selskab=' + al.slug : ''}">Se hele vurderingen i beregneren</a>.</p>`);
+      block(`<h2>Der er ikke noget krav at skrive brev om</h2><ul>${why}</ul>${tip}<p><a href="/beregn/?fra=${from.iata}&til=${to.iata}&hvad=${hvad}${al ? '&selskab=' + al.slug : ''}">Se hele vurderingen i beregneren</a>.</p>`);
       return;
     }
 
     // Advarsler, når brevet laves med forbehold
     const warnings = [];
     if (hvad === 'forsinket' && delayMin >= 720 && !nextDay) warnings.push('Forsinkelsen er over 12 timer. Ankom du først dagen efter, så sæt flueben i "Ankom først næste dag" og lav brevet igen.');
-    if (!hasComp) warnings.push('Der er ikke krav på det faste kompensationsbeløb i din situation. Brevet kræver derfor kun ' + [canClaimRefund ? 'refusion' : '', claimExpenses ? 'dækning af udgifter' : ''].filter(Boolean).join(' og ') + '.');
+    if (!hasComp) warnings.push('Du har ikke krav på det faste kompensationsbeløb i din situation. Brevet kræver derfor kun ' + [canClaimRefund ? 'refusion' : '', claimExpenses ? 'dækning af udgifter' : ''].filter(Boolean).join(' og ') + '.');
     if (hasComp && r.verdict === 'sandsynligvis') warnings.push('Brevet kræver kompensation, men selskabet kan have dokumentation for en usædvanlig omstændighed, som vi ikke kender. Regn med, at de kan afvise, og bed så om dokumentationen.');
     if (r.halved) warnings.push(`Beløbet i brevet er halveret til ${r.eur} €, fordi reglerne tillader det i din situation. Det er det korrekte beløb at kræve.`);
-    if (['vejr', 'ekstern-strejke'].includes(cause) && hasComp) warnings.push('Vejr og strejke uden for selskabet er som regel usædvanlige omstændigheder. Vær forberedt på et nej til det faste beløb. Retten til refusion, ombookning og forplejning gælder uanset.');
+    if (['vejr', 'ekstern-strejke'].includes(cause) && hasComp) warnings.push('Vejr og strejke uden for selskabet er som regel usædvanlige omstændigheder. Vær forberedt på et nej til det faste beløb. Retten til refusion, ombookning og forplejning gælder under alle omstændigheder.');
     warn.hidden = !warnings.length; warn.className = 'notice';
     warn.innerHTML = warnings.map((w) => `<p style="margin:4px 0">${w}</p>`).join('');
 
@@ -228,7 +228,7 @@ ${parts.join('\n\n')}
 
 ${account ? `Please transfer the amount within 14 days to account ${account}.` : 'Please confirm the claim within 14 days, after which I will provide bank details for payment.'}
 ${evidence}
-If I do not receive a reply within 6 weeks I will refer the matter to ${authority.en}.
+If I do not receive a reply within 6 weeks, I will refer the matter to ${authority.en}.
 
 Yours faithfully
 ${sig}`;
@@ -239,8 +239,8 @@ ${sig}`;
     const subject = lang === 'da' ? `Krav om ${hasComp ? 'kompensation' : 'refusion'}, ${flynr} den ${dateFmt(v('dato'), 'da')}, booking ${booking}` : `${hasComp ? 'Compensation' : 'Refund'} claim, ${flynr} on ${dateFmt(v('dato'), 'en')}, booking ${booking}`;
     $('#b-mailto').href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
     $('#b-hvorhen').innerHTML = al
-      ? `Send brevet via <a href="${al.claim}" target="_blank" rel="noopener">${al.name}s kundeservice eller klageformular</a>. Har formularen et fritekstfelt, så sæt brevet ind dér. Gem en kopi af det, du sender, og datoen.`
-      : 'Find selskabets klageformular eller kundeservice-mail på deres hjemmeside, og sæt brevet ind. Gem en kopi og datoen.';
+      ? `Send brevet via <a href="${al.claim}" target="_blank" rel="noopener">klageformularen eller kundeservice hos ${al.name}</a>. Har formularen et fritekstfelt, så sæt brevet ind dér. Gem en kopi af det, du sender, og datoen.`
+      : 'Find selskabets klageformular eller e-mailadresse til kundeservice på selskabets hjemmeside, og sæt brevet ind. Gem en kopi og datoen.';
     out.hidden = false;
     out.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }

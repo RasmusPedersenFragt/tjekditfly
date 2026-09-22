@@ -1,11 +1,11 @@
 // Beregneren på /beregn/. Læser formularen (eller adressens parametre), kalder regelmotoren og skriver resultatet.
 // Ingen afhængigheder. Alt sker i browseren; intet sendes nogen steder.
-import { assess, haversineKm, compensationFor, dkk, SITUATION_LABEL, VERDICT_LABEL } from '/assets/eu261.js?v=ccda2134';
+import { assess, haversineKm, compensationFor, dkk, SITUATION_LABEL, VERDICT_LABEL } from '/assets/eu261.js?v=2d46e05d';
 
 const $ = (s, el = document) => el.querySelector(s);
 const form = $('form.calc:not(#brev-form)');
 if (form) init();
-if (document.getElementById('brev-form')) import('/assets/letter.js?v=f7672a22').then((m) => m.initLetter());
+if (document.getElementById('brev-form')) import('/assets/letter.js?v=8f7640fa').then((m) => m.initLetter());
 
 async function init() {
   const data = await (await fetch('/data/airports.json')).json();

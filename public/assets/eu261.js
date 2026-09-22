@@ -41,7 +41,7 @@ export const downgradePct = (km, bothInEu = false) => (km <= 1500 ? 30 : km <= 3
  */
 export function coverage(from, to, airlineZone) {
   if (from.zone === 'eu') return { covered: true, law: 'EU261', why: `Flyvningen afgår fra ${from.name}, som er omfattet af EU-reglerne. Så gælder reglerne, uanset hvilket selskab der flyver.` };
-  if (to.zone === 'eu' && airlineZone === 'eu') return { covered: true, law: 'EU261', both: from.zone === 'uk', why: `Flyvningen lander i EU, og selskabet er et EU-selskab. Så gælder EU-reglerne, også selvom afgangen er fra ${from.name}.${from.zone === 'uk' ? ' Afgangen fra Storbritannien er samtidig dækket af UK261, og du kan vælge det regelsæt, der passer dig bedst.' : ''}` };
+  if (to.zone === 'eu' && airlineZone === 'eu') return { covered: true, law: 'EU261', both: from.zone === 'uk', why: `Flyvningen lander i EU, og selskabet er et EU-selskab. Så gælder EU-reglerne, også selv om afgangen er fra ${from.name}.${from.zone === 'uk' ? ' Afgangen fra Storbritannien er samtidig dækket af UK261, og du kan vælge det regelsæt, der passer dig bedst.' : ''}` };
   if (from.zone === 'uk') return { covered: true, law: 'UK261', why: `Flyvningen afgår fra Storbritannien. Her gælder den britiske kopi af reglerne (UK261) med samme grænser, blot i pund: 220, 350 eller 520 £.` };
   if (to.zone === 'uk' && airlineZone === 'uk') return { covered: true, law: 'UK261', why: 'Flyvningen lander i Storbritannien med et britisk selskab, så UK261 gælder.' };
   if (to.zone === 'eu' && airlineZone === 'unknown') return { covered: null, law: 'EU261', why: `Flyvningen lander i EU fra et land uden for EU. Så gælder reglerne kun, hvis selskabet har licens i et EU-land, Norge, Island eller Schweiz. Vælg flyselskab for at få et klart svar.` };
@@ -59,7 +59,7 @@ export function causeAssessment(cause) {
     case 'operationelt': return { extraordinary: false, text: 'Forsinket indkommende fly, rotationsproblemer, overbooking eller ombookning på grund af selskabets egne beslutninger er ikke usædvanlige omstændigheder.' };
     case 'egen-strejke': return { extraordinary: false, text: 'Strejke blandt flyselskabets eget personale, varslet eller ej, er ifølge EU-Domstolen (Krüsemann C-195/17 og Airhelp mod SAS C-28/20) en del af selskabets almindelige drift. Du har som udgangspunkt krav på kompensation.' };
     case 'vejr': return { extraordinary: true, text: 'Vejr, der reelt umuliggør flyvningen (tåge, storm, snestorm, askesky), er som regel en usædvanlig omstændighed. Selskabet skal dokumentere, at vejret ramte netop din flyvning, og at forsinkelsen ikke kunne begrænses, fx ved ombookning. "Dårligt vejr et sted i Europa" er ikke nok.' };
-    case 'ekstern-strejke': return { extraordinary: true, text: 'Strejke uden for selskabet (flyveledere, lufthavnspersonale, sikkerhedskontrol) er som regel en usædvanlig omstændighed. Men selskabet skal både dokumentere, at netop din flyvning blev ramt, og at forsinkelsen ikke kunne undgås, fx ved ombookning. Var strejken varslet i god tid, er der ekstra grund til at bede om den dokumentation. Strejke hos handlingpersonale, selskabet selv har hyret, er ikke uden videre uden for dets kontrol.' };
+    case 'ekstern-strejke': return { extraordinary: true, text: 'Strejke uden for selskabet (flyveledere, lufthavnspersonale, sikkerhedskontrol) er som regel en usædvanlig omstændighed. Men selskabet skal både dokumentere, at netop din flyvning blev ramt, og at forsinkelsen ikke kunne undgås, fx ved ombookning. Var strejken varslet i god tid, er der ekstra grund til at bede om den dokumentation. Strejke hos det handlingpersonale, selskabet selv har hyret, er ikke uden videre uden for dets kontrol.' };
     case 'sikkerhed': return { extraordinary: true, text: 'Lukket luftrum, politisk uro, terrortrussel, sikkerhedsrisiko eller myndighedsbeslutning er som regel usædvanlige omstændigheder. Selskabet skal stadig vise, at det gjorde, hvad det kunne, for at begrænse forsinkelsen.' };
     case 'atc': return { extraordinary: true, text: 'Restriktioner fra flyvekontrollen (slots, kapacitet i luftrummet) er som regel en usædvanlig omstændighed, hvis de ramte netop din flyvning. Rutinemæssige forsinkelser på grund af kendt kapacitetsmangel er omstridt. Bed om dokumentation.' };
     case 'fugl': return { extraordinary: true, text: 'Kollision med fugle er ifølge EU-Domstolen (Pešková C-315/15) en usædvanlig omstændighed. Selskabet skal dog have gjort alt for at begrænse forsinkelsen bagefter.' };
@@ -67,7 +67,7 @@ export function causeAssessment(cause) {
   }
 }
 
-const REASONABLE_MEASURES = 'Selskabet er kun fritaget, hvis det både beviser den usædvanlige omstændighed og at forsinkelsen ikke kunne være undgået med rimelige forholdsregler, fx ombookning på et andet fly eller indregnet reservetid (EU-Domstolen, C-294/10 og C-399/24). Kunne du have været ombooket til en afgang få timer senere og blev sat på en dagen efter, har du efter al sandsynlighed et krav. Bed altid om begge dele skriftligt.';
+const REASONABLE_MEASURES = 'Selskabet er kun fritaget, hvis det både beviser den usædvanlige omstændighed, og at forsinkelsen ikke kunne være undgået med rimelige forholdsregler, fx ombookning på et andet fly eller indregnet reservetid (EU-Domstolen, C-294/10 og C-399/24). Kunne du have været ombooket til en afgang få timer senere, men blev sat på et fly dagen efter, har du efter al sandsynlighed et krav. Bed altid om begge dele skriftligt.';
 
 /**
  * Samlet vurdering.
@@ -110,7 +110,7 @@ export function assess({ from, to, airlineZone = 'unknown', situation, delayH = 
       if (rerouteH !== null && rerouteH <= 2 && departEarlierH <= 1) { eligible = false; out.reasons.push('Besked under 7 dage før og en ombookning, der afgik højst 1 time tidligere og ankom højst 2 timer senere end planlagt, giver ikke kompensation.'); }
       else out.reasons.push('Besked under 7 dage før afgang (eller ingen besked) giver kompensation, medmindre du blev tilbudt en ombookning, der både afgik højst 1 time før og ankom højst 2 timer efter det oprindelige tidspunkt.');
     }
-    out.rights.push('Valget mellem refusion af den del af rejsen, du ikke fik (og hele billetten, hvis rejsen dermed har mistet sit formål), inden for 7 dage, og ombookning til din destination ved først mulige lejlighed eller på en senere dato efter dit valg.');
+    out.rights.push('Valget mellem refusion af den del af rejsen, du ikke fik (og hele billetten, hvis rejsen dermed har mistet sit formål), inden for 7 dage, og ombookning til din destination hurtigst muligt eller på en senere dato efter dit valg.');
     out.rights.push('Forplejning under ventetiden og hotel, hvis ombookningen først er næste dag.');
   } else if (situation === 'naegtet-boarding') {
     if (voluntary) { eligible = false; out.reasons.push('Afgav du frivilligt din plads mod en aftalt godtgørelse, gælder den aftale i stedet for kompensationen.'); }
@@ -135,10 +135,10 @@ export function assess({ from, to, airlineZone = 'unknown', situation, delayH = 
     out.verdict = likelyNot ? 'sandsynligvis-ikke' : situation === 'naegtet-boarding' ? (cov.covered === null ? 'sandsynligvis' : 'ja') : (cov.covered === null || c.extraordinary === null) ? 'sandsynligvis' : 'ja';
   }
   if (cov.law === 'UK261') out.rights.push('Forældelse: for UK261-krav anlagt i England og Wales er fristen 6 år (Limitation Act 1980, Dawson v Thomson Airways 2014), i Skotland 5 år.');
-  else out.rights.push('Kravet forældes i Danmark efter 3 år regnet fra flyvningen. Klager du til Trafikstyrelsen inden da, forældes kravet tidligst 1 år efter deres afgørelse (forældelsesloven § 21, stk. 2), men klagen skal være indgivet inden fristen, og sagsbehandlingen tager typisk 9 til 12 måneder.');
+  else out.rights.push('Kravet forældes i Danmark efter 3 år regnet fra flyvningen. Klager du til Trafikstyrelsen inden da, forældes kravet tidligst 1 år efter afgørelsen (forældelsesloven § 21, stk. 2), men klagen skal være indgivet inden fristen, og sagsbehandlingen tager typisk 9 til 12 måneder.');
   if (curr === '€') out.rights.push('Du kan kræve beløbet udbetalt i kroner (EU-Domstolen, Delfly mod Smartwings C-356/19). Kronebeløbet her er vejledende og afhænger af kursen på betalingsdagen.');
   return out;
 }
 
 export const SITUATION_LABEL = { forsinket: 'Forsinket fly', aflyst: 'Aflyst fly', 'naegtet-boarding': 'Nægtet boarding', strejke: 'Strejke', bagage: 'Forsinket eller mistet bagage' };
-export const VERDICT_LABEL = { ja: 'Ja, du har krav på kompensation', sandsynligvis: 'Sandsynligvis, kræv den', 'sandsynligvis-ikke': 'Sandsynligvis ikke, men bed om dokumentation', nej: 'Nej, ikke kompensation i denne situation' };
+export const VERDICT_LABEL = { ja: 'Ja, du har krav på kompensation', sandsynligvis: 'Sandsynligvis. Kræv den alligevel', 'sandsynligvis-ikke': 'Sandsynligvis ikke. Bed om dokumentation', nej: 'Nej, der er ikke kompensation i denne situation' };
