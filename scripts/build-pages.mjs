@@ -23,7 +23,7 @@ const airlines = JSON.parse(await readFile('src/data/airlines.json', 'utf8'));
 const providersFile = JSON.parse(await readFile('src/data/providers.json', 'utf8'));
 const affiliates = JSON.parse(await readFile('src/data/affiliates.json', 'utf8'));
 const site = JSON.parse(await readFile('src/data/site.json', 'utf8'));
-if (!site.cvr || !site.address) console.warn('ADVARSEL: src/data/site.json mangler cvr og/eller address (e-handelslovens § 7). Udfyld før sitet markedsføres.');
+if (!site.address || !site.owner || !site.email) console.warn('ADVARSEL: src/data/site.json mangler owner, address eller email (e-handelslovens § 7).');
 const identityHtml = () => `${esc(site.name)} udgives af ${esc(site.owner)}${site.cvr ? ', CVR-nr. ' + esc(site.cvr) : ''}${site.address ? ', ' + esc(site.address) : ''}. E-mail: <a href="mailto:${esc(site.email)}">${esc(site.email)}</a>.`;
 const A = Object.fromEntries(airports.map((a) => [a.iata, a]));
 

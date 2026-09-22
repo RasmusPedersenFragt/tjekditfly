@@ -1,8 +1,8 @@
 {
-  "_comment": "Udgiveroplysninger, der vises i footeren og på /om/ og /kontakt/ (e-handelslovens § 7). Udfyld cvr og address; build advarer, så længe de er tomme.",
+  "_comment": "Udgiveroplysninger, der vises i footeren og på /om/, /kontakt/ og /privatliv/ (e-handelslovens § 7). cvr udfyldes kun, hvis udgiveren er CVR-registreret; ellers tom.",
   "name": "Tjek dit fly",
   "owner": "Rasmus Pedersen",
   "cvr": "",
-  "address": "",
+  "address": "Syrenvej 5, 8870 Langå",
   "email": "kontakt@tjekditfly.dk"
 }
