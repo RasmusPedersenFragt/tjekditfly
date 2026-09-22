@@ -28,6 +28,9 @@
 <select id="varsel" name="varsel"><option value="0" selected>Under 7 dage før afgang, eller først i lufthavnen</option><option value="7">7 til 13 dage før afgang</option><option value="14">14 dage eller mere før afgang</option></select></div>
 <div class="field"><label for="ombook">Hvor meget senere end planlagt nåede du frem med den ombookning, selskabet tilbød?</label>
 <select id="ombook" name="ombook"><option value="">Jeg fik ingen brugbar ombookning / tog refusion</option><option value="2">Højst 2 timer senere</option><option value="3">2 til 3 timer senere</option><option value="4">3 til 4 timer senere</option><option value="5">Mere end 4 timer senere</option></select></div>
+<div class="field"><label for="tidligere">Hvor meget tidligere end planlagt afgik erstatningsflyet?</label>
+<select id="tidligere" name="tidligere"><option value="0" selected>Samme tid eller senere</option><option value="1">Op til 1 time tidligere</option><option value="2">1 til 2 timer tidligere</option><option value="3">Mere end 2 timer tidligere</option></select>
+<p class="hint">Kompensationen bortfalder kun, hvis erstatningsflyet både afgik tæt på og ankom tæt på det oprindelige tidspunkt.</p></div>
 </div>
 
 <div id="f-boarding" hidden class="field"><label for="frivillig">Afgav du frivilligt din plads mod en godtgørelse?</label>
@@ -61,8 +64,8 @@
 <ul>
 <li><strong>Afstanden</strong> måles som storcirkelafstand mellem de to lufthavne ud fra deres koordinater, præcis som forordningens artikel 7 kræver. Mellemlandinger tæller ikke; det er afstanden fra første afgang til endelig destination.</li>
 <li><strong>Beløbet</strong> er 250 € op til 1.500 km, 400 € fra 1.500 til 3.500 km og 600 € derover. Ruter over 3.500 km, hvor begge lufthavne ligger i EU (fx København til Gran Canaria), giver 400 €.</li>
-<li><strong>Dækningen</strong> afhænger af, hvor flyet afgår fra, og hvem der flyver. Afgang fra EU er altid dækket. Ankomst til EU fra et land uden for EU er kun dækket med et EU-selskab. Norge, Island og Schweiz tæller som EU her.</li>
-<li><strong>Årsagen</strong> vurderes efter EU-Domstolens praksis. Tekniske fejl, besætningsproblemer og egen strejke fritager ikke. Vejr, flyvelederstrejke, fugle og sikkerhed kan fritage, men selskabet skal bevise det.</li>
+<li><strong>Dækningen</strong> afhænger af, hvor flyet afgår fra, og hvem der flyver. Afgang fra EU er altid dækket. Ankomst til EU fra et land uden for EU er kun dækket med et EU-selskab. Norge og Island tæller med gennem EØS-aftalen, Schweiz gennem luftfartsaftalen mellem EU og Schweiz.</li>
+<li><strong>Årsagen</strong> vurderes efter EU-Domstolens praksis. Tekniske fejl, besætningsproblemer og egen strejke fritager som udgangspunkt ikke. Vejr, flyvelederstrejke, fugle og sikkerhed kan fritage, men selskabet skal både bevise omstændigheden og at forsinkelsen ikke kunne undgås med rimelige forholdsregler. Derfor svarer beregneren "sandsynligvis ikke" i stedet for "nej" i de tilfælde.</li>
 </ul>
 <p>Kompensationen er ét beløb pr. person og er uafhængig af billetprisen. Ud over kompensationen har du altid ret til forplejning, ombookning eller refusion og eventuelt hotel. <a href="/regler/">Læs alle reglerne</a>.</p>
 </section>

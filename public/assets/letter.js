@@ -1,7 +1,7 @@
 // Brevgeneratoren på /klag-selv/. Brugeren udfylder felter, og brevet skrives ud fra regelmotorens vurdering
 // (assess i eu261.mjs), så brevet aldrig kræver mere, end reglerne giver. Alt sker i browseren; intet sendes
 // til os. Knappen "Åbn i dit mailprogram" lægger teksten i brugerens eget mailprogram eller webmail.
-import { haversineKm, compensationFor, coverage, assess, assistanceThresholdH } from '/assets/eu261.js?v=c31976c5';
+import { haversineKm, compensationFor, coverage, assess, assistanceThresholdH } from '/assets/eu261.js?v=ccda2134';
 
 const $ = (s, el = document) => el.querySelector(s);
 
@@ -54,7 +54,7 @@ export async function initLetter() {
   const out = $('#brev-ud'), warn = $('#b-advarsel'), letterEl = $('#brev-tekst'), actions = $('#b-actions');
   function block(html) {
     warn.hidden = false; warn.className = 'verdict nej'; warn.innerHTML = html;
-    letterEl.hidden = true; letterEl.textContent = ''; actions.hidden = true; $('#b-hvorhen').textContent = ''; $('#b-overskrift').hidden = true; $('#b-mailto').href = '#';
+    letterEl.hidden = true; letterEl.textContent = ''; actions.hidden = true; $('#b-disclaimer').hidden = true; $('#b-hvorhen').textContent = ''; $('#b-overskrift').hidden = true; $('#b-mailto').href = '#';
     out.hidden = false; out.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -112,7 +112,8 @@ export async function initLetter() {
       block('<h2>Frivilligt afgivet plads: aftalen gælder</h2><p>Meldte du dig frivilligt og aftalte en godtgørelse med selskabet, er det den aftale, der gælder, ikke den faste kompensation i forordningen. Et brev, der kræver kompensation "mod min vilje", ville være forkert. Har selskabet ikke leveret det, I aftalte, så skriv til dem med henvisning til aftalen og dokumentationen for den.</p>');
       return;
     }
-    const r = assess({ from, to, airlineZone: zone, situation: hvad, delayH: delayMin / 60, noticeDays: daysBefore, rerouteH, cause, voluntary });
+    if (hvad === 'forsinket' && delayMin > 1440) { block('<h2>Tjek tiderne</h2><p>Forsinkelsen bliver over 24 timer. Sæt kun flueben i "Ankom først næste dag", hvis flyet landede dagen efter den planlagte ankomst, og tjek klokkeslættene.</p>'); return; }
+    const r = assess({ from, to, airlineZone: zone, situation: hvad, delayH: delayMin / 60, noticeDays: daysBefore, rerouteH, departEarlierH: hvad === 'aflyst' ? Number(v('tidligere') || 0) : 0, cause, voluntary });
     const km = r.km;
     const pax = v('pax').split(/[,;\n]+/).map((s) => s.trim()).filter(Boolean);
     const h = Math.floor(delayMin / 60), m = delayMin % 60;
@@ -139,6 +140,7 @@ export async function initLetter() {
 
     // Advarsler, når brevet laves med forbehold
     const warnings = [];
+    if (hvad === 'forsinket' && delayMin >= 720 && !nextDay) warnings.push('Forsinkelsen er over 12 timer. Ankom du først dagen efter, så sæt flueben i "Ankom først næste dag" og lav brevet igen.');
     if (!hasComp) warnings.push('Der er ikke krav på det faste kompensationsbeløb i din situation. Brevet kræver derfor kun ' + [canClaimRefund ? 'refusion' : '', claimExpenses ? 'dækning af udgifter' : ''].filter(Boolean).join(' og ') + '.');
     if (hasComp && r.verdict === 'sandsynligvis') warnings.push('Brevet kræver kompensation, men selskabet kan have dokumentation for en usædvanlig omstændighed, som vi ikke kender. Regn med, at de kan afvise, og bed så om dokumentationen.');
     if (r.halved) warnings.push(`Beløbet i brevet er halveret til ${r.eur} €, fordi reglerne tillader det i din situation. Det er det korrekte beløb at kræve.`);
@@ -171,7 +173,9 @@ export async function initLetter() {
       if (hasComp) parts.push(`Rutens storcirkelafstand er ${km.toLocaleString('da-DK')} km. Efter forordningens artikel 7 har hver passager derfor krav på ${r.eur} ${curr}${r.halved ? ' (efter den halvering, artikel 7, stk. 2, giver mulighed for)' : ''}, i alt ${total.toLocaleString('da-DK')} ${curr} for ${pax.length} passager${pax.length === 1 ? '' : 'er'}.`);
       if (canClaimRefund) parts.push(`Jeg gør ${hasComp ? 'desuden ' : ''}krav på fuld refusion af billetten inden 7 dage efter artikel 8, stk. 1, litra a, i det omfang refusion ikke allerede er sket.`);
       if (claimExpenses) parts.push(`Jeg har haft følgende udgifter, som jeg beder om at få dækket efter artikel 9, og som jeg kan dokumentere med kvitteringer: ${expenses}.`);
-      const evidence = !hasComp ? '' : `\nMener I, at ${hvad === 'aflyst' ? 'aflysningen' : hvad === 'forsinket' ? 'forsinkelsen' : 'afvisningen'} skyldtes usædvanlige omstændigheder, beder jeg om konkret dokumentation for den pågældende flyvning: hvad der skete, hvornår, og hvilke rimelige forholdsregler I traf for at undgå det. Jeg gør opmærksom på, at tekniske fejl, besætningsproblemer og strejke blandt eget personale ifølge EU-Domstolens praksis (bl.a. sagerne C-549/07, C-195/17 og C-28/20) ikke er usædvanlige omstændigheder.${hvad === 'naegtet-boarding' ? ' Ved nægtet boarding gælder undtagelsen for usædvanlige omstændigheder i øvrigt ikke.' : ''}\n`;
+      if (pax.length > 1) parts.push('Jeg er bemyndiget af de øvrige passagerer i bookingen til at fremsætte kravet og modtage betalingen på deres vegne. Fuldmagt kan fremsendes på anmodning.');
+      if (bf.elements.renter.checked) parts.push('Betales beløbet ikke, beregner jeg renter efter rentelovens § 3, stk. 2, jf. § 5, det vil sige referencesatsen med tillæg af 8 procentpoint, fra 30 dage efter dette brevs dato.');
+      const evidence = !hasComp ? '' : `\nMener I, at ${hvad === 'aflyst' ? 'aflysningen' : hvad === 'forsinket' ? 'forsinkelsen' : 'afvisningen'} skyldtes usædvanlige omstændigheder, beder jeg om konkret dokumentation for den pågældende flyvning: hvad der skete, hvornår, og hvilke rimelige forholdsregler I traf for at undgå det. Jeg gør opmærksom på, at tekniske fejl, der opstår som led i den normale drift, manglende besætning og strejke blandt selskabets eget personale efter EU-Domstolens praksis som udgangspunkt ikke er usædvanlige omstændigheder (bl.a. C-549/07, C-195/17 og C-28/20), og at selskabet også skal godtgøre, at forsinkelsen ikke kunne være undgået med rimelige forholdsregler (C-294/10). Påberåber I jer en undtagelse hertil, beder jeg om dokumentationen.${hvad === 'naegtet-boarding' ? ' Ved nægtet boarding gælder undtagelsen for usædvanlige omstændigheder i øvrigt ikke.' : ''}\n`;
       text = `Til ${airline}, kundeservice
 
 Krav efter ${law.da}
@@ -202,7 +206,9 @@ ${sig}`;
       if (hasComp) parts.push(`The great-circle distance of the route is ${km.toLocaleString('en-GB')} km. Under Article 7 of the Regulation each passenger is therefore entitled to ${curr === '£' ? 'GBP' : 'EUR'} ${r.eur}${r.halved ? ' (after the 50 % reduction permitted by Article 7(2))' : ''}, a total of ${curr === '£' ? 'GBP' : 'EUR'} ${total.toLocaleString('en-GB')} for ${pax.length} passenger${pax.length === 1 ? '' : 's'}.`);
       if (canClaimRefund) parts.push(`I ${hasComp ? 'also ' : ''}claim a full refund of the ticket within 7 days under Article 8(1)(a), to the extent not already provided.`);
       if (claimExpenses) parts.push(`I incurred the following expenses, which I ask you to reimburse under Article 9 and can document with receipts: ${expenses}.`);
-      const evidence = !hasComp ? '' : `\nIf you consider that the ${hvad === 'aflyst' ? 'cancellation' : hvad === 'forsinket' ? 'delay' : 'denial of boarding'} was caused by extraordinary circumstances, I request specific evidence relating to this particular flight: what happened, when, and which reasonable measures you took to avoid it. I note that technical faults, crew shortages and strikes by your own staff are not extraordinary circumstances according to the case law of the Court of Justice of the EU (cases C-549/07, C-195/17 and C-28/20 among others).${hvad === 'naegtet-boarding' ? ' In cases of denied boarding the extraordinary-circumstances defence does not apply at all.' : ''}\n`;
+      if (pax.length > 1) parts.push('I am authorised by the other passengers on the booking to submit this claim and to receive payment on their behalf. A power of attorney can be provided on request.');
+      if (bf.elements.renter.checked) parts.push('If the amount is not paid, I will claim interest under the Danish Interest Act (renteloven) section 3(2) and section 5, i.e. the reference rate plus 8 percentage points, from 30 days after the date of this letter.');
+      const evidence = !hasComp ? '' : `\nIf you consider that the ${hvad === 'aflyst' ? 'cancellation' : hvad === 'forsinket' ? 'delay' : 'denial of boarding'} was caused by extraordinary circumstances, I request specific evidence relating to this particular flight: what happened, when, and which reasonable measures you took to avoid it. I note that technical faults arising in the course of normal operations, crew shortages and strikes by your own staff are, as a rule, not extraordinary circumstances according to the case law of the Court of Justice of the EU (cases C-549/07, C-195/17 and C-28/20 among others), and that the carrier must also show that the disruption could not have been avoided by reasonable measures (C-294/10). If you rely on an exception, I request the supporting evidence.${hvad === 'naegtet-boarding' ? ' In cases of denied boarding the extraordinary-circumstances defence does not apply at all.' : ''}\n`;
       text = `To ${airline}, Customer Relations
 
 Claim under ${law.en}
@@ -225,7 +231,7 @@ Yours faithfully
 ${sig}`;
     }
     text = text.replace(/\n{3,}/g, '\n\n');
-    letterEl.hidden = false; actions.hidden = false; $('#b-overskrift').hidden = false;
+    letterEl.hidden = false; actions.hidden = false; $('#b-overskrift').hidden = false; $('#b-disclaimer').hidden = false;
     letterEl.textContent = text;
     const subject = lang === 'da' ? `Krav om ${hasComp ? 'kompensation' : 'refusion'}, ${flynr} den ${dateFmt(v('dato'), 'da')}, booking ${booking}` : `${hasComp ? 'Compensation' : 'Refund'} claim, ${flynr} on ${dateFmt(v('dato'), 'en')}, booking ${booking}`;
     $('#b-mailto').href = `mailto:?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;

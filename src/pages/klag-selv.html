@@ -30,7 +30,7 @@
 </div>
 <div class="two">
 <div class="field"><label for="b-dato">Afgangsdato *</label><input type="date" id="b-dato" name="dato"></div>
-<div class="field"><label for="b-pax">Passagerer i bookingen *</label><input type="text" id="b-pax" name="pax" placeholder="Fulde navne, adskilt med komma"><p class="hint">Alle med egen billet har krav på fuldt beløb, også børn.</p></div>
+<div class="field"><label for="b-pax">Passagerer i bookingen *</label><input type="text" id="b-pax" name="pax" placeholder="Fulde navne, adskilt med komma"><p class="hint">Alle med egen billet har krav på fuldt beløb, også børn. Skriv kun medrejsende, du har aftalt at kræve på vegne af. Er de voksne, bør du have en kort skriftlig fuldmagt; selskabet kan bede om den.</p></div>
 </div>
 
 <fieldset class="field"><legend>Hvad skete der? *</legend>
@@ -47,6 +47,7 @@
 <div id="b-aflyst" hidden class="two">
 <div class="field"><label for="b-besked">Hvornår fik du besked om aflysningen? *</label><input type="date" id="b-besked" name="besked"></div>
 <div class="field"><label for="b-ombook">Hvad blev du tilbudt?</label><select id="b-ombook" name="ombook"><option value="">Ingen brugbar ombookning: jeg tog refusion eller købte selv ny billet</option><option value="2">Jeg fløj med ombookningen og var fremme højst 2 timer senere end planlagt</option><option value="3">Jeg fløj med ombookningen, fremme 2 til 3 timer senere</option><option value="4">Jeg fløj med ombookningen, fremme 3 til 4 timer senere</option><option value="5">Jeg fløj med ombookningen, fremme mere end 4 timer senere</option></select></div>
+<div class="field"><label for="b-tidligere">Hvor meget tidligere end planlagt afgik erstatningsflyet?</label><select id="b-tidligere" name="tidligere"><option value="0" selected>Samme tid eller senere</option><option value="1">Op til 1 time tidligere</option><option value="2">1 til 2 timer tidligere</option><option value="3">Mere end 2 timer tidligere</option></select></div>
 </div>
 
 <div id="b-boarding" hidden class="field"><label for="b-frivillig">Afgav du frivilligt din plads mod en godtgørelse?</label><select id="b-frivillig" name="frivillig"><option value="nej" selected>Nej, jeg blev afvist mod min vilje</option><option value="ja">Ja, jeg meldte mig frivilligt</option></select></div>
@@ -63,6 +64,7 @@
 </select></div>
 
 <div class="field"><label for="b-udgifter">Udgifter, du vil have dækket (valgfrit)</label><input type="text" id="b-udgifter" name="udgifter" placeholder="fx mad 240 kr, hotel 890 kr, taxa 310 kr. Gem kvitteringerne."></div>
+<div class="field"><label class="small" style="font-weight:500;display:flex;gap:8px;align-items:center"><input type="checkbox" name="renter" style="width:20px;height:20px"> Tilføj varsel om renter efter renteloven, hvis selskabet ikke betaler inden 30 dage</label></div>
 
 <h3 style="margin:8px 0 0">Dine oplysninger</h3>
 <div class="two">
@@ -82,6 +84,7 @@
 
 <div id="brev-ud" class="result" hidden>
 <div class="notice" id="b-advarsel" hidden></div>
+<div class="disclaimer" id="b-disclaimer" hidden><strong>Læs brevet igennem, før du sender det.</strong> Teksten er et forslag, bygget på det, du har tastet, og på EU-forordning 261/2004. Det er dig, der står inde for indholdet over for flyselskabet. Tjek især tider, bookingnummer og passagernavne. Tjek dit fly yder vejledning, ikke juridisk rådgivning, og kan ikke vurdere din konkrete sag.</div>
 <h3 id="b-overskrift">Dit klagebrev</h3>
 <div class="letter" id="brev-tekst"></div>
 <p id="b-actions" style="display:flex;flex-wrap:wrap;gap:10px;margin-top:14px">

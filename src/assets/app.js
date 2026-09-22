@@ -1,6 +1,6 @@
 // Beregneren på /beregn/. Læser formularen (eller adressens parametre), kalder regelmotoren og skriver resultatet.
 // Ingen afhængigheder. Alt sker i browseren; intet sendes nogen steder.
-import { assess, haversineKm, compensationFor, dkk, SITUATION_LABEL } from '/assets/eu261.js?v=__RULES_V__';
+import { assess, haversineKm, compensationFor, dkk, SITUATION_LABEL, VERDICT_LABEL } from '/assets/eu261.js?v=__RULES_V__';
 
 const $ = (s, el = document) => el.querySelector(s);
 const form = $('form.calc:not(#brev-form)');
@@ -70,14 +70,15 @@ async function init() {
       delayH: Number(form.timer.value || 0),
       noticeDays: hvad === 'aflyst' && noticeRaw !== '' ? Number(noticeRaw) : null,
       rerouteH: hvad === 'aflyst' && rerouteRaw !== '' ? Number(rerouteRaw) : null,
+      departEarlierH: hvad === 'aflyst' ? Number(form.tidligere?.value || 0) : 0,
       cause: hvad === 'naegtet-boarding' ? 'ved-ikke' : form.aarsag.value,
       voluntary: hvad === 'naegtet-boarding' && form.frivillig.value === 'ja',
     });
     const label = SITUATION_LABEL[hvad] || hvad;
-    const head = r.verdict === 'ja' ? 'Ja, du har krav på kompensation' : r.verdict === 'sandsynligvis' ? 'Sandsynligvis, kræv den' : 'Nej, ikke kompensation i denne situation';
+    const head = VERDICT_LABEL[r.verdict] || r.verdict;
     const amount = r.eur ? `<span class="amount">${r.eur.toLocaleString('da-DK')} ${r.currency || '€'} <small>≈ ${r.dkk.toLocaleString('da-DK')} kr pr. person</small></span>` : '';
     const ctaData = $('#cta-data') ? JSON.parse($('#cta-data').textContent) : null;
-    const cta = r.eur && ctaData ? `<div class="cta"><div><h2>${ctaData.h}</h2><p>${ctaData.p}</p></div><div class="cta-actions"><a class="btn big" href="${ctaData.url}" target="_blank" rel="${ctaData.rel}">${ctaData.btn}</a><span class="small muted">${ctaData.note}</span><a class="btn secondary" href="/klag-selv/?fra=${from.iata}&til=${to.iata}&hvad=${hvad}${al ? '&selskab=' + al.slug : ''}#brev">Eller skriv klagen selv, gratis</a></div></div>` : `<p><a class="btn secondary" href="/klag-selv/?fra=${from.iata}&til=${to.iata}&hvad=${hvad}${al ? '&selskab=' + al.slug : ''}#brev">Skriv brev om dine øvrige rettigheder</a></p>`;
+    const cta = r.eur && ctaData && r.verdict !== 'sandsynligvis-ikke' ? `<div class="cta"><div><h2>${ctaData.h}</h2><p>${ctaData.p}</p></div><div class="cta-actions"><span class="mark">${ctaData.note}</span><a class="btn big" href="${ctaData.url}" target="_blank" rel="${ctaData.rel}">${ctaData.btn}</a><a class="btn secondary" href="/klag-selv/?fra=${from.iata}&til=${to.iata}&hvad=${hvad}${al ? '&selskab=' + al.slug : ''}#brev">Eller skriv klagen selv, gratis</a></div></div>` : `<p><a class="btn secondary" href="/klag-selv/?fra=${from.iata}&til=${to.iata}&hvad=${hvad}${al ? '&selskab=' + al.slug : ''}#brev">Skriv brev om dine øvrige rettigheder</a></p>`;
     res.innerHTML = `<div class="verdict ${r.verdict}"><h2>${head}</h2>${amount}
 <p class="muted">${label}, ${from.city} til ${to.city}, ${r.km.toLocaleString('da-DK')} km${al ? ', ' + al.name : ''}. ${r.law ? 'Regelsæt: ' + r.law + '.' : ''}</p>
 <h3>Derfor</h3><ul>${r.reasons.map((x) => `<li>${x}</li>`).join('')}</ul>

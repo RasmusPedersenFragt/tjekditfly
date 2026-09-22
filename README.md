@@ -1,6 +1,6 @@
 # Tjek dit fly (tjekditfly.dk)
 
-Uafhængig dansk guide til flykompensation efter EU-forordning 261/2004. Statisk site, ingen framework, ingen cookies.
+Dansk guide til flykompensation efter EU-forordning 261/2004. Ikke ejet af flyselskaber eller kompensationsselskaber; finansieret af annoncelinks. Statisk site, ingen framework, ingen cookies.
 
 ## Struktur
 

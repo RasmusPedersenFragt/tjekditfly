@@ -2,7 +2,7 @@
   "name": "tjekditfly",
   "version": "0.1.0",
   "private": true,
-  "description": "Tjek dit fly – uafhængig guide til flykompensation efter EU261. tjekditfly.dk",
+  "description": "Tjek dit fly – guide til flykompensation efter EU261. tjekditfly.dk",
   "type": "module",
   "engines": {
     "node": ">=18"
