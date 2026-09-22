@@ -1,6 +1,6 @@
 # Plan: afsnit om de nye EU-regler for flypassagerer (gælder fra 2027)
 
-Skrevet 22. september 2026. **Ikke bygget.** Afventer juristernes gennemgang af det eksisterende site.
+Skrevet 22. september 2026. **Bygget samme dag** som `/regler/nye-regler-2027/` (afsnit 2, punkt 1-3, 5-6, 8-9). Afsnit 4 (to regelsæt i regelmotoren) afventer offentliggørelsen i EU-Tidende, hvor `APPLIES_FROM` kan sættes.
 Kilde for alt herunder: den endelige lovtekst **PE-CONS 39/26** (vedtaget af Parlamentet 7. juli og
 Rådet 13. juli 2026), læst direkte, ikke via nyhedsartikler. Sekundære kilder er kun brugt til tidsplanen.
 

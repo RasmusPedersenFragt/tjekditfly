@@ -14,6 +14,7 @@
 - Beregner: https://tjekditfly.dk/beregn/
 - Reglerne: https://tjekditfly.dk/regler/
 - Klag selv med skabelon: https://tjekditfly.dk/klag-selv/
+- De nye regler fra 2027 (vedtaget juli 2026): https://tjekditfly.dk/regler/nye-regler-2027/
 - Sammenligning af kompensationsselskaber: https://tjekditfly.dk/sammenlign/
 - Situationer: https://tjekditfly.dk/situation/forsinket/, https://tjekditfly.dk/situation/aflyst/, https://tjekditfly.dk/situation/naegtet-boarding/, https://tjekditfly.dk/situation/strejke/, https://tjekditfly.dk/situation/bagage/
 - Flyselskaber: https://tjekditfly.dk/flyselskab/ (SAS, Norwegian, Ryanair, easyJet, KLM, Lufthansa, Wizz Air, Turkish Airlines, Sunclass Airlines, Jet Time, British Airways, Air France, Finnair, Vueling, Eurowings, Pegasus Airlines, Emirates, Qatar Airways, Icelandair)
