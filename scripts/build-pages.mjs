@@ -22,6 +22,9 @@ const { airports, routes } = JSON.parse(await readFile('src/data/airports.json',
 const airlines = JSON.parse(await readFile('src/data/airlines.json', 'utf8'));
 const providersFile = JSON.parse(await readFile('src/data/providers.json', 'utf8'));
 const affiliates = JSON.parse(await readFile('src/data/affiliates.json', 'utf8'));
+const site = JSON.parse(await readFile('src/data/site.json', 'utf8'));
+if (!site.cvr || !site.address) console.warn('ADVARSEL: src/data/site.json mangler cvr og/eller address (e-handelslovens § 7). Udfyld før sitet markedsføres.');
+const identityHtml = () => `${esc(site.name)} udgives af ${esc(site.owner)}${site.cvr ? ', CVR-nr. ' + esc(site.cvr) : ''}${site.address ? ', ' + esc(site.address) : ''}. E-mail: <a href="mailto:${esc(site.email)}">${esc(site.email)}</a>.`;
 const A = Object.fromEntries(airports.map((a) => [a.iata, a]));
 
 // ---------- hjælpere ----------
@@ -61,7 +64,7 @@ async function emit({ path: p, title, description, body, file, dateModified, bre
   const crumbs = breadcrumb?.length ? `<p class="crumbs">${breadcrumb.map(([n, h], i) => (i === breadcrumb.length - 1 ? `<span aria-current="page">${esc(n)}</span>` : `<a href="${h}">${esc(n)}</a>`)).join(' › ')}</p>` : '';
   const html = template
     .replaceAll('{{canonical}}', SITE + p).replaceAll('{{title}}', esc(title)).replaceAll('{{description}}', esc(description))
-    .replaceAll('{{site}}', SITE).replaceAll('{{path}}', p).replaceAll('{{styleV}}', STYLE_V).replaceAll('{{rulesDate}}', RULES_DATE)
+    .replaceAll('{{site}}', SITE).replaceAll('{{path}}', p).replaceAll('{{styleV}}', STYLE_V).replaceAll('{{rulesDate}}', RULES_DATE).replace('{{identity}}', identityHtml())
     .replace('{{jsonld}}', JSON.stringify(ld).replace(/<\//g, '<\\/')).replace('{{nav}}', nav(p))
     .replace('{{body}}', crumbs + body.replaceAll('/assets/app.js"', `/assets/app.js?v=${APP_V}"`));
   await writeFile(out, html);
@@ -101,13 +104,13 @@ const FAQ_RULES = [
 const FAQ_SELF = [
   { q: 'Hvor lang tid går der, før flyselskabet svarer?', a: 'De fleste svarer inden for 2 til 6 uger. Nogle lavprisselskaber svarer først efter flere rykkere. Får du intet svar efter 6 uger, kan du klage til Trafikstyrelsen med henvisning til, at selskabet ikke har svaret.' },
   { q: 'Hvad koster det at klage til Trafikstyrelsen?', a: 'Det er gratis. Trafikstyrelsen er den danske myndighed for fly, der afgår fra Danmark eller lander i Danmark fra et land uden for EU med et EU-selskab. De træffer afgørelse i sagen, og de fleste selskaber følger den. Afgik flyet fra et andet EU-land, er det landets myndighed, du skal bruge.' },
-  { q: 'Skal jeg have advokat for at gå i retten?', a: 'Nej. Krav under 50.000 kr behandles som småsager ved byretten, hvor retten hjælper med at forberede sagen, og du kan møde selv. Retsafgiften er 750 kr og betales tilbage af modparten, hvis du vinder.' },
+  { q: 'Skal jeg have advokat for at gå i retten?', a: 'Nej. Krav op til 100.000 kr behandles efter den forenklede proces ved byretten (retsplejelovens kapitel 39), hvor retten hjælper med at forberede sagen, og du kan møde uden advokat. Retsafgiften er 750 kr, som modparten som udgangspunkt skal betale, hvis du vinder.' },
   { q: 'Kan jeg klage på vegne af hele familien?', a: 'Ja, hvis I rejste på samme booking. Skriv alle passagerer i samme mail. Børn med egen billet har krav på fuldt beløb. Spædbørn uden eget sæde har ikke krav på kompensation.' },
   { q: 'Hvad hvis jeg har smidt boardingkortet ud?', a: 'Bookingbekræftelsen og bookingnummeret er nok. Flyselskabet har selv passagerlisten og ved, at du var med. Forsinkelsen kan dokumenteres via offentlige flydata, hvis selskabet bestrider den.' },
 ];
 const FAQ_COMPARE = [
   { q: 'Hvad betyder no cure, no pay?', a: 'At du kun betaler, hvis selskabet får kompensationen hjem. Får du ingen penge, skylder du ikke noget. Læs dog vilkårene: hos nogle selskaber skal du betale salæret, hvis flyselskabet betaler direkte til dig, efter du har oprettet sagen.' },
-  { q: 'Hvorfor er salæret højere ved retssag?', a: 'Fordi selskabet betaler retsafgift og advokat og bærer risikoen for at tabe. De fleste lægger 10 til 15 procentpoint oveni. Flyret og Flyforsinkelse.dk oplyser, at de holder salæret uændret.' },
+  { q: 'Hvorfor er salæret højere ved retssag?', a: 'Fordi selskabet betaler retsafgift og advokat og bærer risikoen for at tabe. De fleste lægger 10 til 15 procentpoint oveni. Flyret oplyser på sin side, at salæret er det samme ved retssag.' },
   { q: 'Kan jeg skifte selskab midt i sagen?', a: 'Som regel ikke uden at betale. Når du har overdraget kravet eller givet fuldmagt, har selskabet ret til salæret, hvis sagen vindes, også hvis du selv får pengene. Vælg derfor ét selskab, og spørg til opsigelse, før du skriver under.' },
   { q: 'Er det bedre at klage selv?', a: 'Hvis du har tid, og flyselskabet er dansk eller skandinavisk, ja. Det er gratis, og mange sager løses ved første eller anden mail. Er selskabet udenlandsk, har det afvist én gang, eller skal sagen i retten, er 30 % ofte givet godt ud.' },
 ];
@@ -123,10 +126,10 @@ const STATIC = [
   ['index', '/', 'Forsinket eller aflyst fly? Tjek dit krav | Tjek dit fly', 'Gratis beregner: se om du har krav på 250, 400 eller 600 € for forsinket, aflyst eller overbooket fly, og hvordan du får pengene. Reglerne forklaret på dansk.', { faq: FAQ_GENERAL }],
   ['beregn', '/beregn/', 'Beregn din flykompensation: rute, forsinkelse og årsag | Tjek dit fly', 'Vælg rute og det, der skete. Beregneren viser beløbet efter EU-forordning 261/2004 og de undtagelser, flyselskabet kan bruge. Kører i din browser, intet gemmes.'],
   ['regler', '/regler/', 'Reglerne for flykompensation (EU261) forklaret på dansk | Tjek dit fly', 'Hvornår har du krav på 250, 400 eller 600 €? Forsinkelse, aflysning, nægtet boarding, usædvanlige omstændigheder og forældelse, med EU-Domstolens afgørelser.', { faq: FAQ_RULES }],
-  ['klag-selv', '/klag-selv/', 'Klag selv over forsinket eller aflyst fly: skabelon | Tjek dit fly', 'Sådan kræver du kompensation hos flyselskabet uden salær. Skabelon på dansk og engelsk, klage til Trafikstyrelsen og småsagsprocessen.', { faq: FAQ_SELF }],
+  ['klag-selv', '/klag-selv/', 'Klag selv over forsinket eller aflyst fly: skabelon | Tjek dit fly', 'Sådan kræver du kompensation hos flyselskabet uden salær. Skabelon på dansk og engelsk, klage til Trafikstyrelsen og den forenklede proces ved byretten.', { faq: FAQ_SELF }],
   ['sammenlign', '/sammenlign/', 'Sammenlign Flyhjælp, AirHelp og 6 andre på salær | Tjek dit fly', 'Otte selskaber, der henter flykompensation mod salær. Sammenlignet på salær, salær ved retssag og hvad du får udbetalt. Gebyrer tjekket ' + providersFile.checked + '.', { faq: FAQ_COMPARE }],
   ['om', '/om/', 'Om Tjek dit fly og Rasmus Pedersen', 'Hvem står bag Tjek dit fly, hvor oplysningerne kommer fra, og hvordan siden arbejder.'],
-  ['annoncelinks', '/annoncelinks/', 'Sådan tjener Tjek dit fly penge: annoncelinks og uafhængighed', 'Tjek dit fly skal finansieres af annoncelinks. Her kan du læse præcis hvordan, hvilke aftaler der findes lige nu, og hvad det betyder for indholdet.'],
+  ['annoncelinks', '/annoncelinks/', 'Sådan tjener Tjek dit fly penge: annoncelinks og hvad de betyder', 'Tjek dit fly skal finansieres af annoncelinks. Her kan du læse præcis hvordan, hvilke aftaler der findes lige nu, og hvad det betyder for indholdet.'],
   ['privatliv', '/privatliv/', 'Privatlivspolitik | Tjek dit fly', 'Hvilke data Tjek dit fly behandler, og hvilke der ikke behandles. Ingen sporingscookies, beregneren kører i din browser.'],
   ['kontakt', '/kontakt/', 'Kontakt Tjek dit fly', 'Skriv til Tjek dit fly med rettelser, forslag eller spørgsmål til siden.'],
 ];
@@ -135,7 +138,7 @@ const providerTable = () => {
   const pct = (v) => (v == null ? '<span class="muted">Ikke oplyst</span>' : `${v} %`);
   return `<div class="table-wrap"><table>
 <thead><tr><th>Selskab</th><th class="num">Salær</th><th class="num">Ved retssag</th><th>Bemærkning</th><th>Link</th></tr></thead>
-<tbody>${ps.map((p) => `<tr><td><strong>${esc(p.name)}</strong><br><span class="muted small">${esc(p.based)}</span></td><td class="num">${pct(p.fee)}</td><td class="num">${pct(p.feeCourt)}</td><td>${esc(p.feeNote)}${p.extras ? ` ${esc(p.extras)}` : ''}</td><td>${p.slug === 'flyhjaelp' ? `<a href="${esc(FH.url)}" target="_blank" rel="${fhRel}">Gå til Flyhjælp</a><br><span class="small muted">${FH.affiliate ? 'Annoncelink' : 'Almindeligt link'}</span>` : `<a href="${esc(p.url)}" target="_blank" rel="noopener">Gå til ${esc(p.name)}</a>`}</td></tr>`).join('')}</tbody></table></div>`;
+<tbody>${ps.map((p) => `<tr><td><strong>${esc(p.name)}</strong><br><span class="muted small">${esc(p.based)}</span></td><td class="num">${pct(p.fee)}</td><td class="num">${pct(p.feeCourt)}</td><td>${esc(p.feeNote)}${p.extras ? ` ${esc(p.extras)}${p.extrasUrl ? ` <a href="${esc(p.extrasUrl)}" rel="noopener" target="_blank">Kilde</a>.` : ''}` : ''}</td><td>${p.slug === 'flyhjaelp' ? `<a href="${esc(FH.url)}" target="_blank" rel="${fhRel}">Gå til Flyhjælp</a><br><span class="small muted">${FH.affiliate ? 'Annoncelink' : 'Almindeligt link'}</span>` : `<a href="${esc(p.url)}" target="_blank" rel="noopener">Gå til ${esc(p.name)}</a>`}</td></tr>`).join('')}</tbody></table></div>`;
 };
 const affiliateStatus = () => FH.affiliate
   ? `<p>Siden har én annonceaftale: <strong>Flyhjælp</strong>, via ${esc(FH.network)}, siden ${esc(FH.since)}. Knapperne "Start din sag hos Flyhjælp" er annoncelinks. Opretter du en sag hos Flyhjælp efter at have klikket, får vi et fast beløb, når sagen er oprettet og underskrevet. Alle andre links på siden, også til de øvrige kompensationsselskaber i sammenligningen, er almindelige links uden provision.</p>`
@@ -152,6 +155,7 @@ for (const [file, p, title, description, opts = {}] of STATIC) {
     .replace('{{CHECKED}}', new Date(providersFile.checked).toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' }))
     .replace('{{PROVIDER_TABLE}}', providerTable())
     .replace('{{AFFILIATE_STATUS}}', affiliateStatus())
+    .replaceAll('{{IDENTITY}}', identityHtml())
     .replace('{{FAQ}}', opts.faq ? faqHtml(opts.faq) : '');
   await emit({ path: p, title, description, body, faq: opts.faq, dateModified: gitDate(`src/pages/${file}.html`) });
 }
@@ -203,7 +207,7 @@ const SITUATIONS = {
     ] },
   strejke: { name: 'Strejke', short: 'strejke', seo: 'Strejke: har du krav på flykompensation?', title: 'Strejke: hvornår har du krav på kompensation for aflyst eller forsinket fly?',
     answer: 'Det afhænger af, <strong>hvem der strejker</strong>. Strejker flyselskabets eget personale, piloter eller kabinepersonale, har du krav på <strong>250, 400 eller 600 €</strong> ligesom ved enhver anden aflysning; EU-Domstolen afgjorde det i sagen Airhelp mod SAS i 2021. Strejker flyveledere, lufthavnspersonale eller sikkerhedskontrollen, er det en usædvanlig omstændighed, og kompensationen bortfalder. Retten til refusion, ombookning og forplejning gælder altid.',
-    body: `<h2>Egen strejke: selskabets ansvar</h2><p>I marts 2021 afgjorde EU-Domstolen sagen <em>Airhelp mod SAS</em> (C-28/20) om SAS-pilotstrejken i 2019. Domstolen fastslog, at en strejke blandt selskabets egne ansatte, også en lovlig og varslet strejke, er en del af selskabets normale drift. Selskabet kan påvirke den gennem forhandling, og den er derfor ikke en usædvanlig omstændighed. Det samme gjaldt allerede for overenskomststridige strejker (Krüsemann mod TUIfly, 2018).</p><p>Konsekvensen: aflyses eller forsinkes dit fly på grund af strejke hos SAS, Lufthansa, Ryanair, Norwegian eller et andet selskabs eget personale, har du krav på kompensation, hvis varslet var under 14 dage, eller forsinkelsen var over 3 timer.</p>
+    body: `<h2>Egen strejke: selskabets ansvar</h2><p>I marts 2021 besvarede EU-Domstolen i sagen <em>Airhelp mod SAS</em> (C-28/20), forelagt af en svensk domstol om SAS-pilotstrejken i 2019, spørgsmålet om strejke som usædvanlig omstændighed. Domstolen fastslog, at en strejke blandt selskabets egne ansatte, også en lovlig og varslet strejke, er en del af selskabets normale drift. Selskabet kan påvirke den gennem forhandling, og den er derfor ikke en usædvanlig omstændighed. Det samme gjaldt allerede for overenskomststridige strejker (Krüsemann mod TUIfly, 2018).</p><p>Konsekvensen: aflyses eller forsinkes dit fly på grund af strejke hos SAS, Lufthansa, Ryanair, Norwegian eller et andet selskabs eget personale, har du krav på kompensation, hvis varslet var under 14 dage, eller forsinkelsen var over 3 timer.</p>
 <h2>Ekstern strejke: uden for selskabets kontrol</h2><p>Strejker flyveledere (fx i Frankrig, som ofte rammer fly over fransk luftrum), lufthavnens personale, sikkerhedskontrol, bagagehåndtering hos en tredjepart eller brændstofleverandører, kan selskabet ikke gøre noget. Det er en usædvanlig omstændighed, og kompensationen bortfalder. Selskabet skal dog stadig ombooke dig, refundere eller give forplejning og hotel.</p>
 <h2>Det, du skal holde øje med</h2><ul><li><strong>Hvem strejker?</strong> Selskaberne skriver ofte bare "strejke". Spørg, om det var deres eget personale.</li><li><strong>14-dages-reglen.</strong> Aflyser selskabet fly mere end 14 dage før en varslet strejke, bortfalder kompensationen, men ikke retten til refusion.</li><li><strong>Personale hos et datterselskab.</strong> Strejker piloter i et datterselskab, der flyver for hovedselskabet, gælder det som egen strejke.</li><li><strong>Kompensationsselskaberne siger ofte nej til strejkesager</strong>, fordi de er sværere at vinde og betales dårligere. Det betyder ikke, at du ikke har et krav. Overvej at <a href="/klag-selv/">klage selv</a>.</li></ul>`,
     faq: [
@@ -369,7 +373,7 @@ ${ctaBox({ h: `Forsinket eller aflyst mellem ${from.city} og ${to.city}?`, p: `F
 await writeFile('public/sitemap.xml', `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n${pages.map((p) => `<url><loc>${SITE}${p.path}</loc><lastmod>${p.lastmod}</lastmod></url>`).join('\n')}\n</urlset>\n`);
 await writeFile('public/llms.txt', `# Tjek dit fly (tjekditfly.dk)
 
-> Uafhængig dansk guide til flykompensation efter EU-forordning 261/2004. Gratis beregner, regler på almindeligt dansk, skabelon til at klage selv, og en sammenligning af de selskaber, der tager sagen mod salær. Skrevet af Rasmus Pedersen. Vejledning, ikke juridisk rådgivning.
+> Dansk guide til flykompensation efter EU-forordning 261/2004. Ikke ejet af flyselskaber eller kompensationsselskaber; finansieret af annoncelinks. Gratis beregner, regler på almindeligt dansk, skabelon til at klage selv, og en sammenligning af de selskaber, der tager sagen mod salær. Skrevet af Rasmus Pedersen. Vejledning, ikke juridisk rådgivning.
 
 ## Kerneregler (gyldige pr. ${RULES_DATE})
 - Kompensation: 250 € (op til 1.500 km), 400 € (1.500–3.500 km, og alle længere ruter inden for EU), 600 € (over 3.500 km uden for EU). Pr. person, uafhængigt af billetpris. Kurs: 1 € ≈ ${EUR_DKK} kr.

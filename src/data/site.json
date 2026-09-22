@@ -1,0 +1,8 @@
+{
+  "_comment": "Udgiveroplysninger, der vises i footeren og på /om/ og /kontakt/ (e-handelslovens § 7). Udfyld cvr og address; build advarer, så længe de er tomme.",
+  "name": "Tjek dit fly",
+  "owner": "Rasmus Pedersen",
+  "cvr": "",
+  "address": "",
+  "email": "kontakt@tjekditfly.dk"
+}

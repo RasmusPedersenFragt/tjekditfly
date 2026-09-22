@@ -77,6 +77,15 @@ eq('boarding = ja', r.verdict, 'ja'); eq('boarding beløb', r.eur, 400);
 r = assess({ from: A.CPH, to: A.PMI, airlineZone: 'eu', situation: 'naegtet-boarding', voluntary: true });
 eq('frivillig = nej', r.verdict, 'nej');
 
+// Forplejning: 2 timer op til 1.500 km, 3 timer op til 3.500 km, 4 timer derover
+r = assess({ from: A.CPH, to: A.LHR, situation: 'forsinket', delayH: 2, cause: 'teknisk' });
+eq('LHR 2h forplejning', r.rights.some((x) => x.startsWith('Mad og drikke')), true);
+r = assess({ from: A.CPH, to: A.PMI, situation: 'forsinket', delayH: 2, cause: 'teknisk' });
+eq('PMI 2h ingen forplejning', r.rights.some((x) => x.startsWith('Mad og drikke')), false);
+r = assess({ from: A.CPH, to: A.BKK, situation: 'forsinket', delayH: 3, cause: 'teknisk' });
+eq('BKK 3h ingen forplejning', r.rights.some((x) => x.startsWith('Mad og drikke')), false);
+eq('BKK threshold', r.assistanceThresholdH, 4);
+
 console.log(errors.length ? `${errors.length} fejl i regelmotoren:` : 'Regelmotor: alle tests bestået.');
 for (const e of errors) console.log('  ' + e);
 if (errors.length) process.exit(1);

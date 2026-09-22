@@ -24,6 +24,9 @@ export function compensationFor(km, bothInEu) {
 
 export const dkk = (eur) => Math.round((eur * EUR_DKK) / 5) * 5;
 
+/** Artikel 6: forplejning ved forsinkelse udløses efter 2 timer (op til 1.500 km), 3 timer (1.500-3.500 km) eller 4 timer (derover). */
+export const assistanceThresholdH = (km) => (km <= 1500 ? 2 : km <= 3500 ? 3 : 4);
+
 /**
  * Gælder forordningen for flyvningen? from/to har zone: 'eu' | 'uk' | 'other'. airlineZone ligeledes.
  * Afgang fra EU: altid. Ankomst til EU fra land uden for EU: kun med EU-selskab. Afgang fra Storbritannien: UK261 (samme regler i pund).
@@ -76,10 +79,12 @@ export function assess({ from, to, airlineZone = 'unknown', situation, delayH = 
 
   const c = causeAssessment(cause);
   let eligible = true;
+  const assistH = assistanceThresholdH(km);
+  out.assistanceThresholdH = assistH;
   if (situation === 'forsinket') {
-    if (delayH < 3) { eligible = false; out.reasons.push('Kompensation kræver mindst 3 timers forsinkelse ved ankomsten til din endelige destination. Under 2 timer giver ingen rettigheder ud over selskabets egne regler; fra 2 timer har du ret til forplejning.'); }
-    else out.reasons.push(`Du ankom ${delayH} timer eller mere for sent til din endelige destination. Det udløser kompensation, hvis selskabet ikke kan bevise en usædvanlig omstændighed.`);
-    if (delayH >= 2) out.rights.push('Mad og drikke i rimeligt forhold til ventetiden, plus to telefonopkald eller e-mails.');
+    if (delayH < 3) { eligible = false; out.reasons.push(`Kompensation kræver mindst 3 timers forsinkelse ved ankomsten til din endelige destination. På denne rute har du ret til forplejning fra ${assistH} timers forsinkelse ved afgangen; derunder giver forordningen ingen rettigheder.`); }
+    else out.reasons.push(`Du ankom ${Math.floor(delayH)} timer eller mere for sent til din endelige destination. Det udløser kompensation, hvis selskabet ikke kan bevise en usædvanlig omstændighed.`);
+    if (delayH >= assistH) out.rights.push('Mad og drikke i rimeligt forhold til ventetiden, plus to telefonopkald eller e-mails.');
     if (delayH >= 5) out.rights.push('Ved 5 timer eller mere: ret til at opgive rejsen og få billetten refunderet inden for 7 dage, plus en returflyvning til dit udgangspunkt, hvis rejsen har mistet sit formål.');
     out.rights.push('Hotel og transport til og fra hotellet, hvis forsinkelsen betyder overnatning.');
   } else if (situation === 'aflyst') {
