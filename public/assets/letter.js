@@ -54,7 +54,7 @@ export async function initLetter() {
   const out = $('#brev-ud'), warn = $('#b-advarsel'), letterEl = $('#brev-tekst'), actions = $('#b-actions');
   function block(html) {
     warn.hidden = false; warn.className = 'verdict nej'; warn.innerHTML = html;
-    letterEl.hidden = true; actions.hidden = true; $('#b-hvorhen').textContent = ''; $('#b-overskrift').hidden = true;
+    letterEl.hidden = true; letterEl.textContent = ''; actions.hidden = true; $('#b-hvorhen').textContent = ''; $('#b-overskrift').hidden = true; $('#b-mailto').href = '#';
     out.hidden = false; out.scrollIntoView({ behavior: 'smooth', block: 'start' });
   }
 
@@ -169,7 +169,7 @@ export async function initLetter() {
           : 'Jeg blev nægtet boarding mod min vilje, selv om jeg havde bekræftet reservation og var mødt rettidigt til check-in og gate. Jeg meldte mig ikke frivilligt.';
       const parts = [];
       if (hasComp) parts.push(`Rutens storcirkelafstand er ${km.toLocaleString('da-DK')} km. Efter forordningens artikel 7 har hver passager derfor krav på ${r.eur} ${curr}${r.halved ? ' (efter den halvering, artikel 7, stk. 2, giver mulighed for)' : ''}, i alt ${total.toLocaleString('da-DK')} ${curr} for ${pax.length} passager${pax.length === 1 ? '' : 'er'}.`);
-      if (canClaimRefund) parts.push(`Jeg gør ${hasComp ? 'desuden' : ''} krav på fuld refusion af billetten inden 7 dage efter artikel 8, stk. 1, litra a, i det omfang refusion ikke allerede er sket.`);
+      if (canClaimRefund) parts.push(`Jeg gør ${hasComp ? 'desuden ' : ''}krav på fuld refusion af billetten inden 7 dage efter artikel 8, stk. 1, litra a, i det omfang refusion ikke allerede er sket.`);
       if (claimExpenses) parts.push(`Jeg har haft følgende udgifter, som jeg beder om at få dækket efter artikel 9, og som jeg kan dokumentere med kvitteringer: ${expenses}.`);
       const evidence = !hasComp ? '' : `\nMener I, at ${hvad === 'aflyst' ? 'aflysningen' : hvad === 'forsinket' ? 'forsinkelsen' : 'afvisningen'} skyldtes usædvanlige omstændigheder, beder jeg om konkret dokumentation for den pågældende flyvning: hvad der skete, hvornår, og hvilke rimelige forholdsregler I traf for at undgå det. Jeg gør opmærksom på, at tekniske fejl, besætningsproblemer og strejke blandt eget personale ifølge EU-Domstolens praksis (bl.a. sagerne C-549/07, C-195/17 og C-28/20) ikke er usædvanlige omstændigheder.${hvad === 'naegtet-boarding' ? ' Ved nægtet boarding gælder undtagelsen for usædvanlige omstændigheder i øvrigt ikke.' : ''}\n`;
       text = `Til ${airline}, kundeservice

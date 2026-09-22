@@ -5,7 +5,7 @@ import { assess, haversineKm, compensationFor, dkk, SITUATION_LABEL } from '/ass
 const $ = (s, el = document) => el.querySelector(s);
 const form = $('form.calc:not(#brev-form)');
 if (form) init();
-if (document.getElementById('brev-form')) import('/assets/letter.js?v=88ce2281').then((m) => m.initLetter());
+if (document.getElementById('brev-form')) import('/assets/letter.js?v=0c78c362').then((m) => m.initLetter());
 
 async function init() {
   const data = await (await fetch('/data/airports.json')).json();
