@@ -28,7 +28,5 @@ node --check public/assets/eu261.js
 
 rm -rf public/rute public/flyselskab public/situation public/lufthavn
 STYLE_V="$STYLE_V" APP_V="$APP_V" node scripts/build-pages.mjs
-{ echo "commits=$(git rev-list --count HEAD 2>&1)"; echo "kontakt=$(git log -1 --format=%cI -- src/pages/kontakt.html 2>&1)"; echo "gitver=$(git --version 2>&1)"; echo "pwd=$(pwd)"; echo "gitdir=$(git rev-parse --git-dir 2>&1)"; echo "shallow=$(git rev-parse --is-shallow-repository 2>&1)"; } > public/_diag.txt
-
 node scripts/test-rules.mjs
 node scripts/test-pages.mjs
