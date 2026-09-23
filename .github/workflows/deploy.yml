@@ -31,4 +31,8 @@ jobs:
         with:
           apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           accountId: 0051ca795dd4f6896515a9cc051d1e77
+          # Action'en installerer selv wrangler 3.90 som standard, og den version kender
+          # ikke assets-only Workers: den leder efter et `main`-felt, som med vilje ikke
+          # findes her, og fejler med "Missing entry-point". Wrangler 4 skal til.
+          wranglerVersion: "4.137.0"
           command: deploy
