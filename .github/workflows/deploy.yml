@@ -18,6 +18,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+        with:
+          # Fuld historik. build-pages.mjs sætter hver fast sides dateModified ud fra
+          # `git log -1 -- <fil>`, og i en shallow clone peger det på HEAD for alle filer.
+          # Med depth 1 blev alle sider derfor stemplet med dagens dato ved hvert deploy.
+          fetch-depth: 0
 
       - uses: actions/setup-node@v4
         with:
