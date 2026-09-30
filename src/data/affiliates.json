@@ -1,4 +1,5 @@
 {
-  "_comment": "Ét opslag pr. udbyder. url er det link, knapperne bruger. affiliate: false betyder almindeligt link uden provision (rel=noopener). Skift til true og indsæt Adtraction-tracking-linket, når programmet er godkendt; så får knappen rel='nofollow sponsored noopener' og teksten 'Annoncelink'. since: dato for aftalen, bruges på /annoncelinks/.",
-  "flyhjaelp": { "name": "Flyhjælp", "url": "https://flyhjaelp.dk/", "affiliate": false, "network": "Adtraction", "since": null }
+  "_comment": "Ét opslag pr. udbyder, nøglen er slug fra providers.json. url er det link, knapperne og sammenligningen bruger. affiliate: false betyder almindeligt link uden provision (rel=noopener). Skift til true og indsæt tracking-linket fra netværket, når programmet er godkendt; så får linket rel='nofollow sponsored noopener' og teksten 'Annoncelink'. since: dato for aftalen, bruges på /annoncelinks/. pays: hvad vi får betaling for, i en sætning, der fortsætter 'vi får et fast beløb, når ...'.",
+  "flyhjaelp": { "name": "Flyhjælp", "url": "https://flyhjaelp.dk/", "affiliate": false, "network": "Adtraction", "since": null },
+  "flyforsinkelse": { "name": "Flyforsinkelse.dk", "url": "https://www.partner-ads.com/dk/klikbanner.php?partnerid=57643&bannerid=115908", "affiliate": true, "network": "Partner-ads", "since": "2026-09-30", "pays": "du har oprettet et krav hos dem" }
 }

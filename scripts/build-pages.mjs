@@ -126,7 +126,7 @@ const FAQ_SELF = [
 ];
 const FAQ_COMPARE = [
   { q: 'Hvad betyder no cure, no pay?', a: 'At du kun betaler, hvis selskabet får kompensationen hjem. Får du ingen penge, skylder du ikke noget. Læs dog vilkårene: hos nogle selskaber skal du betale salæret, hvis flyselskabet betaler direkte til dig, efter du har oprettet sagen.' },
-  { q: 'Hvorfor er salæret højere ved retssag?', a: 'Fordi selskabet betaler retsafgift og advokat og bærer risikoen for at tabe. De fleste lægger 10 til 15 procentpoint oveni. Flyret oplyser på sin side, at salæret er det samme ved retssag.' },
+  { q: 'Hvorfor er salæret højere ved retssag?', a: 'Fordi selskabet betaler retsafgift og advokat og bærer risikoen for at tabe. De fleste lægger 10 til 15 procentpoint oveni. Flyret og Flyforsinkelse.dk oplyser på deres sider, at salæret er det samme ved retssag.' },
   { q: 'Kan jeg skifte selskab midt i sagen?', a: 'Som regel ikke uden at betale. Når du har overdraget kravet eller givet fuldmagt, har selskabet ret til salæret, hvis sagen vindes, også hvis du selv får pengene. Vælg derfor ét selskab, og spørg til opsigelse, før du skriver under.' },
   { q: 'Er det bedre at klage selv?', a: 'Hvis du har tid, og flyselskabet er dansk eller skandinavisk, ja. Det er gratis, og mange sager løses ved den første eller anden e-mail. Er selskabet udenlandsk, har det afvist én gang, eller skal sagen i retten, er 30 % ofte givet godt ud.' },
 ];
@@ -150,16 +150,31 @@ const STATIC = [
   ['privatliv', '/privatliv/', 'Privatlivspolitik | Tjek dit fly', 'Hvilke data Tjek dit fly behandler, og hvilke der ikke behandles. Ingen sporingscookies, beregneren kører i din browser.'],
   ['kontakt', '/kontakt/', 'Kontakt Tjek dit fly', 'Skriv til Tjek dit fly med rettelser, forslag eller spørgsmål til siden.'],
 ];
+/** Link til et kompensationsselskab. Har vi en aktiv aftale, bruges tracking-linket, og linket mærkes. */
+const providerLink = (p) => {
+  const a = affiliates[p.slug];
+  if (a?.affiliate) return `<a href="${esc(a.url)}" target="_blank" rel="nofollow sponsored noopener"><strong>${esc(p.name)}</strong></a><br><span class="mark">Annoncelink</span>`;
+  return `<a href="${esc(p.url)}" target="_blank" rel="noopener"><strong>${esc(p.name)}</strong></a>`;
+};
+const activeDeals = Object.entries(affiliates).filter(([k, a]) => k !== '_comment' && a.affiliate);
+const daDate = (d) => new Date(d).toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' });
 const providerTable = () => {
   const ps = [...providersFile.providers].sort((x, y) => ((x.fee ?? 99) - (y.fee ?? 99)) || ((x.feeCourt ?? 99) - (y.feeCourt ?? 99)) || x.name.localeCompare(y.name, 'da'));
   const pct = (v) => (v == null ? '<span class="muted">Ikke oplyst</span>' : `${v} %`);
   return `<div class="table-wrap"><table>
 <thead><tr><th>Selskab</th><th class="num">Salær</th><th class="num">Ved retssag</th><th>Sådan oplyses det</th><th>Bemærkning</th><th>Kilde</th></tr></thead>
-<tbody>${ps.map((p) => `<tr><td><strong>${esc(p.name)}</strong><br><span class="muted small">${esc(p.based)}</span></td><td class="num">${pct(p.fee)}</td><td class="num">${pct(p.feeCourt)}</td><td>${esc(p.feeNote)}</td><td>${p.extras ? `${esc(p.extras)}${p.extrasUrl ? ` <a href="${esc(p.extrasUrl)}" rel="noopener" target="_blank">Kilde</a>.` : ''}` : '<span class="muted">–</span>'}</td><td><a href="${esc(p.priceUrl)}" target="_blank" rel="noopener">${esc(p.source)}</a><br><span class="small muted">aflæst ${FH_CHECKED}</span>${p.slug === 'flyhjaelp' ? `<br><span class="small">${FH.affiliate ? 'Annoncelink' : 'Ingen betalt aftale'}</span>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
+<tbody>${ps.map((p) => `<tr><td>${providerLink(p)}<br><span class="muted small">${esc(p.based)}</span></td><td class="num">${pct(p.fee)}</td><td class="num">${pct(p.feeCourt)}</td><td>${esc(p.feeNote)}</td><td>${p.extras ? `${esc(p.extras)}${p.extrasUrl ? ` <a href="${esc(p.extrasUrl)}" rel="noopener" target="_blank">Kilde</a>.` : ''}` : '<span class="muted">–</span>'}</td><td><a href="${esc(p.priceUrl)}" target="_blank" rel="noopener">${esc(p.source)}</a><br><span class="small muted">aflæst ${FH_CHECKED}</span>${p.slug === 'flyhjaelp' ? `<br><span class="small">${FH.affiliate ? 'Annoncelink' : 'Ingen betalt aftale'}</span>` : ''}</td></tr>`).join('')}</tbody></table></div>`;
 };
-const affiliateStatus = () => FH.affiliate
-  ? `<p>Siden har én annonceaftale: <strong>Flyhjælp</strong>, via ${esc(FH.network)}, siden ${esc(FH.since)}. Knapperne "Start din sag hos Flyhjælp" er annoncelinks. Opretter du en sag hos Flyhjælp efter at have klikket, får vi et fast beløb, når sagen er oprettet og underskrevet. Alle andre links på siden, også til de øvrige kompensationsselskaber i sammenligningen, er almindelige links uden provision.</p>`
-  : `<p>Pr. ${new Date().toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' })} har siden <strong>ingen annonceaftaler</strong>. Knapperne "Start din sag hos Flyhjælp" er almindelige links, som ikke giver os noget. Vi har valgt at linke til Flyhjælp, fordi de er danske og oplyser deres salær åbent, og vi søger om optagelse i deres partnerprogram via netværket Adtraction. Bliver aftalen godkendt, bliver knapperne mærket "Annoncelink", og datoen for aftalen kommer til at stå her.</p>`;
+const affiliateStatus = () => {
+  const deals = activeDeals.map(([slug, a]) => `<strong>${esc(a.name)}</strong> via ${esc(a.network)}, siden ${daDate(a.since)}`);
+  const where = (slug) => (slug === 'flyhjaelp' ? 'Knapperne "Start din sag hos Flyhjælp"' : `Linket til ${esc(affiliates[slug].name)} i <a href="/sammenlign/">sammenligningen</a>`);
+  const dealText = activeDeals.length
+    ? `<p>Siden har ${activeDeals.length === 1 ? 'én annonceaftale' : `${activeDeals.length} annonceaftaler`}: ${deals.join('; ')}. ${activeDeals.map(([slug, a]) => `${where(slug)} er annoncelink. Opretter du en sag hos ${esc(a.name)} efter at have klikket, får vi et fast beløb, når ${esc(a.pays || 'sagen er oprettet')}.`).join(' ')} Alle andre links på siden, også til de øvrige kompensationsselskaber, er almindelige links uden provision.</p>`
+    : `<p>Pr. ${daDate(new Date())} har siden <strong>ingen annonceaftaler</strong>.</p>`;
+  const fhText = FH.affiliate ? ''
+    : `<p>Knapperne "Start din sag hos Flyhjælp" er almindelige links, som ikke giver os noget. Vi har valgt at fremhæve Flyhjælp, fordi de er danske og oplyser deres salær åbent, og vi søger om optagelse i deres partnerprogram via netværket ${esc(FH.network)}. Bliver aftalen godkendt, bliver knapperne mærket "Annoncelink", og datoen for aftalen kommer til at stå her.${activeDeals.length ? ' At vi har en aftale med et andet selskab, ændrer ikke, hvem vi fremhæver.' : ''}</p>`;
+  return dealText + fhText;
+};
 
 for (const [file, p, title, description, opts = {}] of STATIC) {
   let body = await readFile(`src/pages/${file}.html`, 'utf8');
@@ -173,6 +188,7 @@ for (const [file, p, title, description, opts = {}] of STATIC) {
     .replace('{{PROVIDER_TABLE}}', providerTable())
     .replace('{{AFFILIATE_STATUS}}', affiliateStatus())
     .replaceAll('{{IDENTITY}}', identityHtml())
+    .replace('{{OTHER_DEALS}}', activeDeals.filter(([slug]) => slug !== 'flyhjaelp').map(([slug, a]) => ` Vi har en annonceaftale med ${esc(a.name)}, og linket til dem i tabellen er mærket "Annoncelink". De står ikke fremhævet, fordi Flyhjælps salær er lavere.`).join(''))
     .replace('{{FH_DISCLOSURE}}', FH.affiliate ? '<strong>Annoncepartner:</strong> vi får betaling, når du opretter en sag hos Flyhjælp via vores link.' : '<strong>Ingen betalt aftale i dag:</strong> linket til Flyhjælp giver os intet lige nu.')
     .replaceAll('{{TODAY}}', new Date().toLocaleDateString('da-DK', { day: 'numeric', month: 'long', year: 'numeric' }))
     .replace('{{FAQ}}', opts.faq ? faqHtml(opts.faq) : '');
