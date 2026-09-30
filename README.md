@@ -9,7 +9,7 @@ Dansk guide til flykompensation efter EU-forordning 261/2004. Ikke ejet af flyse
 - `src/lib/eu261.mjs` – regelmotoren: afstand, beløb, dækning, undtagelser. Bruges både ved build og i browserens beregner.
 - `src/data/airports.json` – lufthavne med koordinater og ruter (genereres af `scripts/make-airports.mjs` fra OurAirports).
 - `src/data/airlines.json` – de 19 selskaber med hjemland, licenszone og kontaktvej.
-- `src/data/providers.json` – kompensationsselskabernes salær til `/sammenlign/`. Opdatér `checked`, når du tjekker igen.
+- `src/data/providers.json` – kompensationsselskabernes salær til `/sammenlign/`. `check` pr. udbyder er de tekster, der skal stå på prissiden. Workflowet "Tjek salærer" (`scripts/check-fees.mjs`) aflæser siderne hver dag og flytter `checked` til dagens dato, når alle er bekræftet; ellers åbner det et issue.
 - `src/data/affiliates.json` – **her indsættes Flyhjælps tracking-link, når Adtraction har godkendt.** Sæt `affiliate: true`, `url` og `since`; build mærker knapperne "Annoncelink" og sætter `rel="nofollow sponsored"`.
 - `scripts/build-pages.mjs` – genererer alle sider, sitemap.xml og llms.txt.
 - `scripts/test-rules.mjs` – regressionstest af regelmotoren mod kendte afgørelser. `scripts/test-pages.mjs` – kvalitetstest af hver bygget side.
@@ -50,5 +50,5 @@ Herefter deployer Cloudflare automatisk ved hvert push til `main`. Husk `bash bu
 1. Opret `kontakt@tjekditfly.dk` (mailadressen står på alle trust-sider).
 2. Søg Flyhjælps program på Adtraction (kanaltype Content Marketing), og indsæt tracking-linket i `src/data/affiliates.json`.
 3. Tilmeld sitet Google Search Console og Bing Webmaster Tools, indsend `sitemap.xml`.
-4. Tjek `providers.json` hver måned og opdatér `checked`.
+4. Hold øje med issues fra "Tjek salærer", og ret `providers.json`, når en udbyder ændrer salær.
 5. Hold øje med EU's revision af forordningen; grænser og beløb ligger samlet i `src/lib/eu261.mjs`.

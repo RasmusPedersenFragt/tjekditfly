@@ -1,0 +1,92 @@
+name: Tjek salærer
+
+# Aflæser hver dag kompensationsselskabernes prissider (scripts/check-fees.mjs).
+# Står alle salærer der stadig, flyttes "checked" i src/data/providers.json til i dag, sitet
+# bygges, committes og deployes. Står de ikke der, røres datoen ikke, og der åbnes et issue.
+
+on:
+  schedule:
+    # 04:17 UTC, altså tidligt om morgenen dansk tid. GitHub kan forsinke planlagte jobs.
+    - cron: "17 4 * * *"
+  workflow_dispatch: # kan startes manuelt under "Actions"
+
+permissions:
+  contents: write
+  issues: write
+  actions: write # til at starte deploy-workflowet
+
+concurrency:
+  group: check-fees
+  cancel-in-progress: false
+
+env:
+  ISSUE_TITLE: "Salærer kunne ikke bekræftes"
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Fuld historik: build-pages.mjs læser dateModified fra git log.
+          fetch-depth: 0
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Aflæs prissider
+        id: tjek
+        run: node scripts/check-fees.mjs
+
+      - name: Byg, commit og push den nye dato
+        id: commit
+        if: steps.tjek.outputs.changed == 'true'
+        run: |
+          set -euo pipefail
+          bash build.sh
+          git add -A -- src/data/providers.json public
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "Salærer aflæst $(TZ=Europe/Copenhagen date +%F)"
+          for forsoeg in 1 2 3; do
+            if git push; then
+              echo "pushet=1" >> $GITHUB_OUTPUT
+              exit 0
+            fi
+            echo "Push afvist, henter og rebaser (forsøg $forsoeg)"
+            git pull --rebase origin main
+          done
+          echo "Kunne ikke pushe efter tre forsøg"
+          exit 1
+
+      # Et push med GITHUB_TOKEN starter ikke andre workflows, så deploy startes eksplicit.
+      - name: Start deploy
+        if: steps.commit.outputs.pushet == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main
+
+      - name: Luk åbent issue, når alt er bekræftet igen
+        if: steps.tjek.outputs.ok == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          for n in $(gh issue list --state open --search "in:title \"$ISSUE_TITLE\"" --json number --jq '.[].number'); do
+            gh issue close "$n" --comment "Alle salærer bekræftet igen $(TZ=Europe/Copenhagen date +%F)."
+          done
+
+      - name: Åbn eller opdater issue
+        if: steps.tjek.outputs.ok == 'false'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          n=$(gh issue list --state open --search "in:title \"$ISSUE_TITLE\"" --json number --jq '.[0].number // empty')
+          if [ -n "$n" ]; then
+            gh issue comment "$n" --body-file fee-report.md
+          else
+            gh issue create --title "$ISSUE_TITLE" --body-file fee-report.md
+          fi
+          # Fejl jobbet, så GitHub også sender den sædvanlige mail om et fejlet workflow.
+          exit 1
