@@ -1,5 +1,5 @@
 {
-  "checked": "2026-10-09",
+  "checked": "2026-10-10",
   "note": "Gebyrer aflæst på udbydernes egne prissider den angivne dato. Kun tal, der står på udbyderens egen side, vises som tal; ellers står 'Ikke oplyst'. Alle arbejder efter 'no cure, no pay': intet gebyr, hvis du ikke får kompensation.",
   "providers": [
     { "slug": "flyhjaelp", "name": "Flyhjælp", "url": "https://flyhjaelp.dk/", "priceUrl": "https://flyhjaelp.dk/sider/prisliste", "based": "Danmark", "fee": 30, "feeCourt": 45, "feeNote": "30 % inkl. moms af kompensationen. Går sagen i retten, er det i alt 45 %.", "extras": "Hjælper også med refusion af billetten ved aflysning, samme satser.", "featured": true, "source": "flyhjaelp.dk/sider/prisliste", "check": {"has": ["tager vi 30%", "samlede honorar bliver 45%", "inklusive moms"]} },
